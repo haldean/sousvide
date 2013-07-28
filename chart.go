@@ -16,6 +16,10 @@ const (
 )
 
 func (s *SousVide) GenerateChart(w http.ResponseWriter, req *http.Request) {
+	if s.History.End == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
 	c := chart.ScatterChart{}
 
 	c.Key.Hide = true
