@@ -15,13 +15,13 @@ const (
 )
 
 type SousVide struct {
-	Temp        Celsius
-	Target      Celsius
-	History     TempHistory
-	HistoryLock sync.Mutex
+	Temp     Celsius
+	Target   Celsius
+	History  TempHistory
+	Pid      PidParams
+	DataLock sync.Mutex
 }
 
-// A ring buffer to store historical data for plotting
 type TempHistory struct {
 	Times     [HistoryLength]time.Time
 	Temps     [HistoryLength]float64
@@ -30,12 +30,15 @@ type TempHistory struct {
 	End       int
 }
 
+type PidParams struct {
+	P float64
+	I float64
+	D float64
+}
+
 type Celsius float64
 
 func (s *SousVide) checkpoint() {
-	s.HistoryLock.Lock()
-	defer s.HistoryLock.Unlock()
-
 	// this would be better implemented by a ring buffer, but it doesn't
 	// actually buy me anything because on every change I have to write it to a
 	// flat array to plot it anyway.
@@ -61,13 +64,18 @@ func (s *SousVide) checkpoint() {
 func (s *SousVide) StartControlLoop() {
 	tick := time.Tick(InterruptDelay)
 	for _ = range tick {
+		s.DataLock.Lock()
 		s.Temp -= 0.1*s.Error() + Celsius(rand.Float64()-0.5)
 		log.Printf("read temperature %f deg C", s.Temp)
 		s.checkpoint()
+		s.DataLock.Unlock()
 	}
 }
 
 func (s *SousVide) SetTarget(target Celsius) {
+	s.DataLock.Lock()
+	defer s.DataLock.Unlock()
+
 	s.Target = target
 	s.checkpoint()
 }
@@ -79,6 +87,10 @@ func (s *SousVide) Error() Celsius {
 func main() {
 	s := new(SousVide)
 	s.Target = 200
+	s.Pid.P = 10
+	s.Pid.I = 0.1
+	s.Pid.D = 10
+
 	go s.StartControlLoop()
 	s.StartServer()
 }

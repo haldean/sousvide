@@ -1,5 +1,6 @@
 var tempElem, absErrElem, targetElem, absErrTdElem, plotElem
 var targetDisplayElem, targetChangeElem, targetInputElem
+var pInputElem, iInputElem, dInputElem
 
 function getApiData() {
 	$.ajax({
@@ -14,6 +15,8 @@ function getApiData() {
 }
 
 function displayData(data) {
+	console.log(data)
+
 	var i = data.Temps.length - 1
 	var temp = data.Temps[i],
 		target = data.Targets[i],
@@ -22,6 +25,10 @@ function displayData(data) {
 	$(tempElem).text(temp.toFixed(2));
 	$(targetElem).text(target.toFixed(2));
 	$(absErrElem).text((err >= 0 ? '+' : '') + err.toFixed(2));
+
+	pInputElem.setAttribute('value', data.PidParams.P)
+	iInputElem.setAttribute('value', data.PidParams.I)
+	dInputElem.setAttribute('value', data.PidParams.D)
 
 	if (err > 0) {
 		$(absErrTdElem).removeClass('cold')
@@ -41,9 +48,14 @@ $(document).ready(function() {
 	targetElem = document.getElementById('target')
 	absErrTdElem = document.getElementById('err_td')
 	plotElem = document.getElementById('plot')
+
 	targetChangeElem = document.getElementById('target_change')
 	targetDisplayElem = document.getElementById('target_display')
 	targetInputElem = document.getElementById('target_input')
+
+	pInputElem = document.getElementById('pid_p')
+	iInputElem = document.getElementById('pid_i')
+	dInputElem = document.getElementById('pid_d')
 
 	targetElem.onclick = function() {
 		$(targetDisplayElem).css('display', 'none')

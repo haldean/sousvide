@@ -5,9 +5,14 @@
 		<style>
 			body {
 				font-family: 'Source Sans Pro', sans-serif;
-				margin: 100px 50px;
+				margin: 50px 50px;
 				max-width: 600px;
 				font-size: 14pt;
+			}
+
+			section {
+				border-left: 7pt solid #EEE;
+				padding-left: 10pt;
 			}
 
 			.val {
@@ -38,11 +43,11 @@
 				display: none;
 			}
 
-			#target_input {
+			#target_input, .pid_param {
 				font-size: 18pt;
 				font-family: 'Source Code Pro', monospace;
 				width: 100pt;
-				display: inline;
+				text-align: right;
 			}
 		</style>
 		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro' rel='stylesheet' type='text/css'>
@@ -52,30 +57,64 @@
 	</head>
 	<body>
 		<h1>sousvide control</h1>
-		<table>
-			<tr>
-				<td class="label temp_label">Current temperature:</td>
-				<td class="val"><span id="temp"></span>&deg; C</td>
-			</tr>
-			<tr>
-				<td class="label target_label">Target temperature:</td>
-				<td class="val">
-					<span id="target_display">
-						<span id="target"></span>&deg; C
-					</span>
-					<span id="target_change">
-						<form method="POST" action="/target">
-							<input type="text" id="target_input" name="target">
-							<input type="submit" style="display:none;">
-						</form>
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="label error_label">Error:</td>
-				<td class="val" id="err_td"><span id="abs_err"></span>&deg; C</td>
-			</tr>
-		</table>
-		<img src="/plot" id="plot">
+		<section>
+			<h2>status</h2>
+			<table>
+				<tr>
+					<td class="label temp_label">Current temperature:</td>
+					<td class="val"><span id="temp"></span>&deg; C</td>
+				</tr>
+				<tr>
+					<td class="label target_label">Target temperature:</td>
+					<td class="val">
+						<span id="target_display">
+							<span id="target"></span>&deg; C
+						</span>
+						<span id="target_change">
+							<form method="POST" action="/target">
+								<input type="text" id="target_input" name="target">
+								<input type="submit" style="display:none;">
+							</form>
+						</span>
+					</td>
+				</tr>
+				<tr>
+					<td class="label error_label">Error:</td>
+					<td class="val" id="err_td"><span id="abs_err"></span>&deg; C</td>
+				</tr>
+			</table>
+			<img src="/plot" id="plot">
+		</section>
+		<section>
+			<h2>controller</h2>
+			<form method="POST" action="/pid">
+				<table>
+					<tr>
+						<td>Proportional</td>
+						<td class="val">
+							<input type="text" class="pid_param" name="p" id="pid_p">
+						</td>
+					</tr>
+					<tr>
+						<td>Integral</td>
+						<td class="val">
+							<input type="text" class="pid_param" name="i" id="pid_i">
+						</td>
+					</tr>
+					<tr>
+						<td>Derivative</td>
+						<td class="val">
+							<input type="text" class="pid_param" name="d" id="pid_d">
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td class="val">
+							<input value="update" type="submit">
+						</td>
+					</tr>
+				</table>
+			</form>
+		</section>
 	</body>
 </html>
