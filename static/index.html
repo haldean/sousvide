@@ -32,12 +32,13 @@
 			}
 
 			.label {
-				border-left: 14pt solid #000;
+				border-left: 14pt solid #FFF;
 				padding-left: 14pt;
 			}
 			.temp_label { border-color: #F00; }
 			.target_label { border-color: #00F; }
 			.error_label { border-color: #666; }
+			.hot { color: #F00; }
 
 			#target_change {
 				display: none;
@@ -60,6 +61,10 @@
 		<section>
 			<h2>status</h2>
 			<table>
+				<tr>
+					<td class="label heater_label">Heater is:</td>
+					<td class="val"><span id="heating"></span></td>
+				</tr>
 				<tr>
 					<td class="label temp_label">Current temperature:</td>
 					<td class="val"><span id="temp"></span>&deg; C</td>

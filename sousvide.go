@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"math"
 	"math/rand"
 	"sync"
 	"time"
@@ -12,22 +11,33 @@ const (
 	InterruptDelay = 1 * time.Second
 	LogFile        = "runlog.txt"
 	HistoryLength  = 2048
+	LowpassSamples = 3
 )
 
 type SousVide struct {
-	Temp     Celsius
-	Target   Celsius
-	History  TempHistory
-	Pid      PidParams
-	DataLock sync.Mutex
+	Heating     bool
+	Temp        Celsius
+	Target      Celsius
+	History     []HistorySample
+	Pid         PidParams
+	DataLock    sync.Mutex
+	lastPOutput float64
+	lastIOutput float64
+	lastDOutput float64
+	lastControl float64
 }
 
-type TempHistory struct {
-	Times     [HistoryLength]time.Time
-	Temps     [HistoryLength]float64
-	Targets   [HistoryLength]float64
-	LogErrors [HistoryLength]float64
-	End       int
+type HistorySample struct {
+	Time     time.Time
+	Heating  bool
+	Temp     float64
+	Target   float64
+	AbsError float64
+	Pid      PidParams
+	POutput  float64
+	IOutput  float64
+	DOutput  float64
+	COutput  float64
 }
 
 type PidParams struct {
@@ -38,38 +48,81 @@ type PidParams struct {
 
 type Celsius float64
 
-func (s *SousVide) checkpoint() {
-	// this would be better implemented by a ring buffer, but it doesn't
-	// actually buy me anything because on every change I have to write it to a
-	// flat array to plot it anyway.
+func New() *SousVide {
+	s := new(SousVide)
+	s.History = make([]HistorySample, 0, HistoryLength)
+	return s
+}
 
-	h := &s.History
-	if h.End == HistoryLength {
-		for i := 0; i < HistoryLength-1; i++ {
-			h.Times[i] = h.Times[i+1]
-			h.Temps[i] = h.Temps[i+1]
-			h.Targets[i] = h.Targets[i+1]
-			h.LogErrors[i] = h.LogErrors[i+1]
-		}
-		h.End -= 1
+func (s *SousVide) Snapshot() HistorySample {
+	return HistorySample{
+		Time:     time.Now(),
+		Heating:  s.Heating,
+		Temp:     float64(s.Temp),
+		Target:   float64(s.Target),
+		AbsError: float64(s.Error()),
+		Pid:      s.Pid,
+		POutput:  s.lastPOutput,
+		IOutput:  s.lastIOutput,
+		DOutput:  s.lastDOutput,
+		COutput:  s.lastControl,
 	}
+}
 
-	h.Times[h.End] = time.Now()
-	h.Temps[h.End] = float64(s.Temp)
-	h.Targets[h.End] = float64(s.Target)
-	h.LogErrors[h.End] = math.Abs(math.Log10(math.Abs(float64(s.Error()))))
-	h.End += 1
+func (s *SousVide) checkpoint() {
+	if len(s.History) == HistoryLength {
+		for i := 0; i < HistoryLength-1; i++ {
+			s.History[i] = s.History[i+1]
+		}
+		s.History[len(s.History)-1] = s.Snapshot()
+	} else {
+		s.History = append(s.History, s.Snapshot())
+	}
 }
 
 func (s *SousVide) StartControlLoop() {
 	tick := time.Tick(InterruptDelay)
 	for _ = range tick {
 		s.DataLock.Lock()
-		s.Temp -= 0.1*s.Error() + Celsius(rand.Float64()-0.5)
+		if s.Heating {
+			s.Temp += Celsius(10 * rand.Float64())
+		} else {
+			s.Temp -= Celsius(10 * rand.Float64())
+		}
 		log.Printf("read temperature %f deg C", s.Temp)
+
+		co := s.ControllerResult()
+		s.Heating = co > 0
+		log.Printf("controller returned %v", co)
+
 		s.checkpoint()
 		s.DataLock.Unlock()
 	}
+}
+
+func (s *SousVide) ControllerResult() Celsius {
+	s.lastPOutput = s.Pid.P * float64(s.Error())
+
+	if len(s.History) > 0 {
+		integral := float64(0)
+		for _, h := range s.History {
+			integral += h.AbsError
+		}
+		integral /= float64(len(s.History))
+		s.lastIOutput = s.Pid.I * integral
+	}
+
+	// ignore derivative term if we have no history to use
+	if len(s.History) > LowpassSamples {
+		// use weighted window over three samples instead of two to act as a
+		// low-pass filter
+		N := len(s.History)
+		d := (s.History[N-LowpassSamples-1].AbsError - s.History[N-1].AbsError) / 2
+		s.lastDOutput = s.Pid.D * d
+	}
+
+	s.lastControl = s.lastPOutput + s.lastIOutput + s.lastDOutput
+	return Celsius(s.lastControl)
 }
 
 func (s *SousVide) SetTarget(target Celsius) {
@@ -81,11 +134,11 @@ func (s *SousVide) SetTarget(target Celsius) {
 }
 
 func (s *SousVide) Error() Celsius {
-	return s.Temp - s.Target
+	return s.Target - s.Temp
 }
 
 func main() {
-	s := new(SousVide)
+	s := New()
 	s.Target = 200
 	s.Pid.P = 10
 	s.Pid.I = 0.1

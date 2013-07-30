@@ -16,7 +16,7 @@ const (
 )
 
 func (s *SousVide) GenerateChart(w http.ResponseWriter, req *http.Request) {
-	if s.History.End == 0 {
+	if len(s.History) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
@@ -30,18 +30,17 @@ func (s *SousVide) GenerateChart(w http.ResponseWriter, req *http.Request) {
 	c.YRange.TicSetting.HideLabels = true
 
 	s.DataLock.Lock()
-	h := &s.History
 
-	c.XRange.Fixed(0, float64(h.End)+1, float64(h.End/10))
+	c.XRange.Fixed(0, float64(len(s.History))+1, float64(len(s.History)/10))
 
-	temps := make([]chart.EPoint, 0, h.End)
-	targets := make([]chart.EPoint, 0, h.End)
-	errs := make([]chart.EPoint, 0, h.End)
+	temps := make([]chart.EPoint, 0, len(s.History))
+	targets := make([]chart.EPoint, 0, len(s.History))
+	errs := make([]chart.EPoint, 0, len(s.History))
 	var ep chart.EPoint
-	for i, _ := range h.Times[:h.End] {
+	for i, h := range s.History {
 		ep = chart.EPoint{
 			X:      float64(i),
-			Y:      h.Temps[i],
+			Y:      h.Temp,
 			DeltaX: math.NaN(),
 			DeltaY: math.NaN(),
 		}
@@ -49,7 +48,7 @@ func (s *SousVide) GenerateChart(w http.ResponseWriter, req *http.Request) {
 
 		ep = chart.EPoint{
 			X:      float64(i),
-			Y:      h.Targets[i],
+			Y:      h.Target,
 			DeltaX: math.NaN(),
 			DeltaY: math.NaN(),
 		}
@@ -57,7 +56,7 @@ func (s *SousVide) GenerateChart(w http.ResponseWriter, req *http.Request) {
 
 		ep = chart.EPoint{
 			X:      float64(i),
-			Y:      math.Abs(h.Temps[i] - h.Targets[i]),
+			Y:      math.Abs(h.Temp - h.Target),
 			DeltaX: math.NaN(),
 			DeltaY: math.NaN(),
 		}

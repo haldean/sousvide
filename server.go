@@ -9,13 +9,6 @@ import (
 	"strconv"
 )
 
-type apiData struct {
-	Temps     []float64
-	Targets   []float64
-	LogErrors []float64
-	PidParams PidParams
-}
-
 func floatData(w http.ResponseWriter, req *http.Request, arg string) (float64, error) {
 	valStr := req.FormValue(arg)
 	if valStr == "" {
@@ -40,15 +33,12 @@ func (s *SousVide) StartServer() {
 		s.DataLock.Lock()
 		defer s.DataLock.Unlock()
 
-		h := &s.History
-		a := apiData{
-			h.Temps[:h.End],
-			h.Targets[:h.End],
-			h.LogErrors[:h.End],
-			s.Pid,
+		if len(s.History) == 0 {
+			resp.WriteHeader(http.StatusNoContent)
+			return
 		}
 
-		b, err := json.Marshal(a)
+		b, err := json.Marshal(s.History[len(s.History)-1])
 		if err != nil {
 			log.Panicf("could not marshal temp data to json: %v", err)
 		}
@@ -92,6 +82,8 @@ func (s *SousVide) StartServer() {
 		s.checkpoint()
 		http.Redirect(resp, req, "/", http.StatusSeeOther)
 	})
+
+	http.HandleFunc("/csv", s.DumpCsv)
 
 	http.HandleFunc("/plot", s.GenerateChart)
 

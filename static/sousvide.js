@@ -1,4 +1,4 @@
-var tempElem, absErrElem, targetElem, absErrTdElem, plotElem
+var tempElem, absErrElem, targetElem, absErrTdElem, heatingElem, plotElem
 var targetDisplayElem, targetChangeElem, targetInputElem
 var pInputElem, iInputElem, dInputElem
 
@@ -17,28 +17,26 @@ function getApiData() {
 function displayData(data) {
 	console.log(data)
 
-	var i = data.Temps.length - 1
-	var temp = data.Temps[i],
-		target = data.Targets[i],
+	var temp = data.Temp,
+		target = data.Target,
 		err = temp - target;
 
 	$(tempElem).text(temp.toFixed(2));
 	$(targetElem).text(target.toFixed(2));
 	$(absErrElem).text((err >= 0 ? '+' : '') + err.toFixed(2));
 
-	pInputElem.setAttribute('value', data.PidParams.P)
-	iInputElem.setAttribute('value', data.PidParams.I)
-	dInputElem.setAttribute('value', data.PidParams.D)
+	pInputElem.setAttribute('value', data.Pid.P)
+	iInputElem.setAttribute('value', data.Pid.I)
+	dInputElem.setAttribute('value', data.Pid.D)
 
-	if (err > 0) {
-		$(absErrTdElem).removeClass('cold')
-		$(absErrTdElem).addClass('hot')
-	} else if (err < 0) {
-		$(absErrTdElem).removeClass('hot')
-		$(absErrTdElem).addClass('cold')
+	if (data.Heating) {
+		$(heatingElem).addClass('hot')
+		$(heatingElem).removeClass('cold')
+		$(heatingElem).text('ON')
 	} else {
-		$(absErrTdElem).removeClass('hot')
-		$(absErrTdElem).removeClass('cold')
+		$(heatingElem).addClass('cold')
+		$(heatingElem).removeClass('hot')
+		$(heatingElem).text('OFF')
 	}
 }
 
@@ -47,6 +45,7 @@ $(document).ready(function() {
 	absErrElem = document.getElementById('abs_err')
 	targetElem = document.getElementById('target')
 	absErrTdElem = document.getElementById('err_td')
+	heatingElem = document.getElementById('heating')
 	plotElem = document.getElementById('plot')
 
 	targetChangeElem = document.getElementById('target_change')
