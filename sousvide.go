@@ -117,7 +117,7 @@ func (s *SousVide) ControllerResult() Celsius {
 		// use weighted window over three samples instead of two to act as a
 		// low-pass filter
 		N := len(s.History)
-		d := (s.History[N-LowpassSamples-1].AbsError - s.History[N-1].AbsError) / 2
+		d := (s.History[N-LowpassSamples-1].Temp - s.History[N-1].Temp) / 2
 		s.lastDOutput = s.Pid.D * d
 	}
 
