@@ -23,7 +23,7 @@ func findSerial() (string, error) {
 		return "", err
 	}
 	for _, d := range devices {
-		if !strings.Contains(d, "w1_bus_master") {
+		if !strings.Contains(d, "w1 bus master") {
 			return d, nil
 		}
 	}
