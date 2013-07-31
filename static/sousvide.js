@@ -1,4 +1,4 @@
-var tempElem, absErrElem, targetElem, absErrTdElem, heatingElem, plotElem
+var tempElem, absErrElem, targetElem, heatingElem, plotElem, accErrElem
 var targetDisplayElem, targetChangeElem, targetInputElem
 var pInputElem, iInputElem, dInputElem
 
@@ -24,6 +24,7 @@ function displayData(data) {
 	$(tempElem).text(temp.toFixed(2));
 	$(targetElem).text(target.toFixed(2));
 	$(absErrElem).text((err >= 0 ? '+' : '') + err.toFixed(2));
+	$(accErrElem).text(data.AccError.toFixed(2))
 
 	pInputElem.setAttribute('value', data.Pid.P)
 	iInputElem.setAttribute('value', data.Pid.I)
@@ -44,9 +45,9 @@ $(document).ready(function() {
 	tempElem = document.getElementById('temp')
 	absErrElem = document.getElementById('abs_err')
 	targetElem = document.getElementById('target')
-	absErrTdElem = document.getElementById('err_td')
 	heatingElem = document.getElementById('heating')
 	plotElem = document.getElementById('plot')
+	accErrElem = document.getElementById('acc_err')
 
 	targetChangeElem = document.getElementById('target_change')
 	targetDisplayElem = document.getElementById('target_display')

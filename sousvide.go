@@ -1,8 +1,10 @@
 package main
 
 import (
-	"log"
-	"math/rand"
+	"flag"
+	"fmt"
+	"math"
+	"os"
 	"sync"
 	"time"
 )
@@ -11,7 +13,8 @@ const (
 	InterruptDelay = 1 * time.Second
 	LogFile        = "runlog.txt"
 	HistoryLength  = 2048
-	LowpassSamples = 3
+	LowpassSamples = 2
+	AccErrorWindow = 32
 )
 
 type SousVide struct {
@@ -20,7 +23,9 @@ type SousVide struct {
 	Target      Celsius
 	History     []HistorySample
 	Pid         PidParams
+	Gpio        GpioParams
 	DataLock    sync.Mutex
+	AccError    float64
 	lastPOutput float64
 	lastIOutput float64
 	lastDOutput float64
@@ -33,6 +38,7 @@ type HistorySample struct {
 	Temp     float64
 	Target   float64
 	AbsError float64
+	AccError float64
 	Pid      PidParams
 	POutput  float64
 	IOutput  float64
@@ -44,6 +50,12 @@ type PidParams struct {
 	P float64
 	I float64
 	D float64
+}
+
+type GpioParams struct {
+	ThermFd  *os.File
+	HeaterFd *os.File
+	Stub     bool
 }
 
 type Celsius float64
@@ -61,6 +73,7 @@ func (s *SousVide) Snapshot() HistorySample {
 		Temp:     float64(s.Temp),
 		Target:   float64(s.Target),
 		AbsError: float64(s.Error()),
+		AccError: s.AccError,
 		Pid:      s.Pid,
 		POutput:  s.lastPOutput,
 		IOutput:  s.lastIOutput,
@@ -78,51 +91,15 @@ func (s *SousVide) checkpoint() {
 	} else {
 		s.History = append(s.History, s.Snapshot())
 	}
-}
 
-func (s *SousVide) StartControlLoop() {
-	tick := time.Tick(InterruptDelay)
-	for _ = range tick {
-		s.DataLock.Lock()
-		if s.Heating {
-			s.Temp += Celsius(10 * rand.Float64())
-		} else {
-			s.Temp -= Celsius(10 * rand.Float64())
-		}
-		log.Printf("read temperature %f deg C", s.Temp)
-
-		co := s.ControllerResult()
-		s.Heating = co > 0
-		log.Printf("controller returned %v", co)
-
-		s.checkpoint()
-		s.DataLock.Unlock()
+	s.AccError = 0
+	N := len(s.History)
+	l := float64(0)
+	for i := N - 1; i >= N-AccErrorWindow-1 && i >= 0; i-- {
+		s.AccError += math.Abs(s.History[i].AbsError)
+		l++
 	}
-}
-
-func (s *SousVide) ControllerResult() Celsius {
-	s.lastPOutput = s.Pid.P * float64(s.Error())
-
-	if len(s.History) > 0 {
-		integral := float64(0)
-		for _, h := range s.History {
-			integral += h.AbsError
-		}
-		integral /= float64(len(s.History))
-		s.lastIOutput = s.Pid.I * integral
-	}
-
-	// ignore derivative term if we have no history to use
-	if len(s.History) > LowpassSamples {
-		// use weighted window over three samples instead of two to act as a
-		// low-pass filter
-		N := len(s.History)
-		d := (s.History[N-LowpassSamples-1].Temp - s.History[N-1].Temp) / 2
-		s.lastDOutput = s.Pid.D * d
-	}
-
-	s.lastControl = s.lastPOutput + s.lastIOutput + s.lastDOutput
-	return Celsius(s.lastControl)
+	s.AccError /= l
 }
 
 func (s *SousVide) SetTarget(target Celsius) {
@@ -138,11 +115,19 @@ func (s *SousVide) Error() Celsius {
 }
 
 func main() {
+	flag.Parse()
+
 	s := New()
 	s.Target = 200
 	s.Pid.P = 10
 	s.Pid.I = 0.1
 	s.Pid.D = 10
+
+	err := s.InitGpio()
+	if err != nil {
+		fmt.Printf("could not initialize gpio: %v\n", err)
+		return
+	}
 
 	go s.StartControlLoop()
 	s.StartServer()

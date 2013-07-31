@@ -50,6 +50,13 @@
 				width: 100pt;
 				text-align: right;
 			}
+
+			.subtext {
+				display: block;
+				font-size: 9pt;
+				margin-top: -2pt;
+				color: #CCC;
+			}
 		</style>
 		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro' rel='stylesheet' type='text/css'>
 
@@ -86,6 +93,15 @@
 				<tr>
 					<td class="label error_label">Error:</td>
 					<td class="val" id="err_td"><span id="abs_err"></span>&deg; C</td>
+				</tr>
+				<tr>
+					<td class="label">
+						Mean error per sample:
+						<span class="subtext">
+							Taken over 32-sample sliding window
+						</span>
+					</td>
+					<td class="val">&plusmn;<span id="acc_err"></span> &deg;C/sample</td>
 				</tr>
 			</table>
 			<img src="/plot" id="plot">
