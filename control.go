@@ -3,16 +3,13 @@
 package main
 
 import (
-	"flag"
 	"fmt"
-	"math/rand"
+	"log"
 	"os"
 	"time"
 )
 
 const HeaterGpioPin = 18
-
-var StubGpio = flag.Bool("stub_gpio", false, "stub GPIO calls for testing")
 
 func checkHeaterExported() error {
 	_, err := os.Stat(fmt.Sprintf("/sys/class/gpio/gpio%d", HeaterGpioPin))
@@ -24,7 +21,7 @@ func checkHeaterExported() error {
 	}
 
 	fd, err := os.OpenFile(
-		"/sys/class/gpio/export", os.O_WRONLY | os.O_SYNC, 0666)
+		"/sys/class/gpio/export", os.O_WRONLY|os.O_SYNC, 0666)
 	if err != nil {
 		return err
 	}
@@ -37,7 +34,7 @@ func checkHeaterExported() error {
 func setHeaterOutputMode() error {
 	fd, err := os.OpenFile(
 		fmt.Sprintf("/sys/class/gpio/gpio%d/direction", HeaterGpioPin),
-		os.O_WRONLY | os.O_SYNC, 0666)
+		os.O_WRONLY|os.O_SYNC, 0666)
 	if err != nil {
 		return err
 	}
@@ -48,7 +45,6 @@ func setHeaterOutputMode() error {
 }
 
 func (s *SousVide) InitGpio() error {
-	s.Gpio.Stub = *StubGpio
 	if s.Gpio.Stub {
 		s.Gpio.HeaterFd = os.Stdout
 		return nil
@@ -62,12 +58,14 @@ func (s *SousVide) InitGpio() error {
 	if err != nil {
 		return err
 	}
+
 	s.Gpio.HeaterFd, err = os.OpenFile(
 		fmt.Sprintf("/sys/class/gpio/gpio%d/value", HeaterGpioPin),
-		os.O_WRONLY | os.O_SYNC, 0666)
+		os.O_WRONLY|os.O_SYNC, 0666)
 	if err != nil {
 		return err
 	}
+
 	return nil
 }
 
@@ -75,16 +73,15 @@ func (s *SousVide) StartControlLoop() {
 	tick := time.Tick(InterruptDelay)
 	for _ = range tick {
 		s.DataLock.Lock()
-		s.UpdateHardware()
-
-		if s.Heating {
-			s.Temp += Celsius(10 * rand.Float64())
-		} else {
-			s.Temp -= Celsius(10 * rand.Float64())
+		err := s.MeasureTemp()
+		if err != nil {
+			log.Fatalf("could not read temperature: %v", err)
+			continue
 		}
 
 		co := s.ControllerResult()
 		s.Heating = co > 0
+		s.UpdateHardware()
 
 		s.checkpoint()
 		s.DataLock.Unlock()

@@ -59,10 +59,8 @@ func (s *SousVide) StartServer() {
 	})
 
 	http.HandleFunc("/pid", func(resp http.ResponseWriter, req *http.Request) {
-		log.Printf("acquire lock")
 		s.DataLock.Lock()
 		defer s.DataLock.Unlock()
-		log.Printf("acquired lock")
 
 		p, err := floatData(resp, req, "p")
 		if err != nil {

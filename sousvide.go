@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"flag"
 	"fmt"
 	"math"
@@ -16,6 +17,8 @@ const (
 	LowpassSamples = 2
 	AccErrorWindow = 32
 )
+
+var StubGpio = flag.Bool("stub_gpio", false, "stub GPIO calls for testing")
 
 type SousVide struct {
 	Heating     bool
@@ -53,9 +56,10 @@ type PidParams struct {
 }
 
 type GpioParams struct {
-	ThermFd  *os.File
-	HeaterFd *os.File
-	Stub     bool
+	ThermFd     *os.File
+	ThermReader *bufio.Reader
+	HeaterFd    *os.File
+	Stub        bool
 }
 
 type Celsius float64
@@ -122,10 +126,17 @@ func main() {
 	s.Pid.P = 10
 	s.Pid.I = 0.1
 	s.Pid.D = 10
+	s.Gpio.Stub = *StubGpio
 
 	err := s.InitGpio()
 	if err != nil {
 		fmt.Printf("could not initialize gpio: %v\n", err)
+		return
+	}
+
+	err = s.InitTherm()
+	if err != nil {
+		fmt.Printf("could not initialize thermocouple: %v\n", err)
 		return
 	}
 
