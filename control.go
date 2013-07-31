@@ -75,15 +75,13 @@ func (s *SousVide) StartControlLoop() {
 		s.DataLock.Lock()
 		err := s.MeasureTemp()
 		if err != nil {
-			log.Fatalf("could not read temperature: %v", err)
-			continue
+			log.Printf("could not read temperature: %v", err)
+		} else {
+			co := s.ControllerResult()
+			s.Heating = co > 0
+			s.UpdateHardware()
+			s.checkpoint()
 		}
-
-		co := s.ControllerResult()
-		s.Heating = co > 0
-		s.UpdateHardware()
-
-		s.checkpoint()
 		s.DataLock.Unlock()
 	}
 }
