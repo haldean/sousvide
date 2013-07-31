@@ -78,6 +78,9 @@ func (s *SousVide) MeasureTemp() error {
 			fmt.Sprintf("malformed line from 1-wire interface: %s", line))
 	}
 	if data[1] != "YES" {
+		// read the next line to flush the buffer. when we get a NO status
+		// there's still a line with the last temperature it read
+		s.Gpio.ThermReader.ReadString('\n')
 		return errors.New(fmt.Sprintf(
 			"thermocouple did not return 'YES' status, got %s", line))
 	}
