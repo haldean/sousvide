@@ -19,6 +19,7 @@ const (
 )
 
 var StubGpio = flag.Bool("stub_gpio", false, "stub GPIO calls for testing")
+var FakeTemp = flag.Bool("fake_temp", false, "use fake temperature values")
 
 type SousVide struct {
 	Heating     bool

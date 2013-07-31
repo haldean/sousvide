@@ -31,20 +31,25 @@ func findSerial() (string, error) {
 }
 
 func (s *SousVide) InitTherm() error {
-	if s.Gpio.Stub {
-		return nil
-	}
+	var err error
+	if s.Gpio.Stub && !*FakeTemp {
+		s.Gpio.ThermFd, err = os.OpenFile(
+			"test_temp.txt", os.O_RDONLY | os.O_SYNC, 0666)
+		if err != nil {
+			return err
+		}
+	} else {
+		serial, err := findSerial()
+		if err != nil {
+			return err
+		}
 
-	serial, err := findSerial()
-	if err != nil {
-		return err
-	}
-
-	s.Gpio.ThermFd, err = os.OpenFile(
-		fmt.Sprintf("/sys/bus/w1/devices/%s/w1_slave", serial),
-		os.O_RDONLY | os.O_SYNC, 0666)
-	if err != nil {
-		return err
+		s.Gpio.ThermFd, err = os.OpenFile(
+			fmt.Sprintf("/sys/bus/w1/devices/%s/w1_slave", serial),
+			os.O_RDONLY | os.O_SYNC, 0666)
+		if err != nil {
+			return err
+		}
 	}
 
 	s.Gpio.ThermReader = bufio.NewReader(s.Gpio.ThermFd)
@@ -52,7 +57,7 @@ func (s *SousVide) InitTherm() error {
 }
 
 func (s *SousVide) MeasureTemp() error {
-	if s.Gpio.Stub {
+	if s.Gpio.Stub && *FakeTemp {
 		if s.Heating {
 			s.Temp += Celsius(10 * rand.Float64())
 		} else {
@@ -66,6 +71,7 @@ func (s *SousVide) MeasureTemp() error {
 	if err != nil {
 		return err
 	}
+	line = strings.TrimSpace(line)
 	data := strings.Split(strings.Split(line, "=")[1], " ")
 	if len(data) != 2 {
 		return errors.New(
@@ -80,6 +86,7 @@ func (s *SousVide) MeasureTemp() error {
 	if err != nil {
 		return err
 	}
+	line = strings.TrimSpace(line)
 	val := strings.Split(line, "=")[1]
 	floatVal, err := strconv.ParseFloat(val, 64)
 	if err != nil {
