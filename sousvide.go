@@ -34,6 +34,7 @@ type SousVide struct {
 	Gpio        GpioParams
 	DataLock    sync.Mutex
 	AccError    float64
+	MaxError	float64
 	lastPOutput float64
 	lastIOutput float64
 	lastDOutput float64
@@ -48,6 +49,7 @@ type HistorySample struct {
 	Target   float64
 	AbsError float64
 	AccError float64
+	MaxError float64
 	Pid      PidParams
 	POutput  float64
 	IOutput  float64
@@ -85,6 +87,7 @@ func (s *SousVide) Snapshot() HistorySample {
 		Target:   float64(s.Target),
 		AbsError: float64(s.Error()),
 		AccError: s.AccError,
+		MaxError: s.MaxError,
 		Pid:      s.Pid,
 		POutput:  s.lastPOutput,
 		IOutput:  s.lastIOutput,
@@ -104,12 +107,19 @@ func (s *SousVide) checkpoint() {
 	}
 
 	s.AccError = 0
+	s.MaxError = 0
 	N := len(s.History)
 	l := float64(0)
 	for i := N - 1; i >= N-AccErrorWindow-1 && i >= 0; i-- {
-		s.AccError += math.Abs(s.History[i].AbsError)
+		ae := s.History[i].AbsError
+		s.AccError += math.Abs(ae)
+		if ae < s.MaxError {
+			// find the most negative error
+			s.MaxError = ae
+		}
 		l++
 	}
+	s.MaxError *= -1
 	s.AccError /= l
 }
 
