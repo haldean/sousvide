@@ -30,9 +30,6 @@ func (s *SousVide) StartServer() {
 	http.HandleFunc("/api_data", func(resp http.ResponseWriter, req *http.Request) {
 		resp.Header().Set("Content-type", "application/json")
 
-		s.DataLock.Lock()
-		defer s.DataLock.Unlock()
-
 		if len(s.History) == 0 {
 			resp.WriteHeader(http.StatusNoContent)
 			return
@@ -87,5 +84,5 @@ func (s *SousVide) StartServer() {
 
 	http.Handle("/", http.FileServer(http.Dir("static/")))
 
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	log.Fatal(http.ListenAndServe(":80", nil))
 }

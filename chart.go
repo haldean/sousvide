@@ -29,8 +29,6 @@ func (s *SousVide) GenerateChart(w http.ResponseWriter, req *http.Request) {
 	c.YRange.TicSetting.Grid = 1
 	c.YRange.TicSetting.HideLabels = true
 
-	s.DataLock.Lock()
-
 	c.XRange.Fixed(0, float64(len(s.History))+1, float64(len(s.History)/10))
 
 	temps := make([]chart.EPoint, 0, len(s.History))
@@ -62,7 +60,6 @@ func (s *SousVide) GenerateChart(w http.ResponseWriter, req *http.Request) {
 		}
 		errs = append(errs, ep)
 	}
-	s.DataLock.Unlock()
 
 	c.AddData("Temperature", temps, chart.PlotStyleLines, chart.Style{
 		LineColor: color.NRGBA{0xFF, 0x00, 0x00, 0xFF}, LineWidth: 2,

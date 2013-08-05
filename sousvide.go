@@ -11,7 +11,7 @@ import (
 )
 
 const (
-	InterruptDelay = 1 * time.Second
+	InterruptDelay = 3 * time.Second
 	LogFile        = "runlog.txt"
 	HistoryLength  = 2048
 	LowpassSamples = 2
@@ -123,7 +123,6 @@ func main() {
 	flag.Parse()
 
 	s := New()
-	s.Target = 200
 	s.Pid.P = 10
 	s.Pid.I = 0.1
 	s.Pid.D = 10
