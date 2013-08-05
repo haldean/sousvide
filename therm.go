@@ -32,7 +32,11 @@ func findSerial() (string, error) {
 
 func (s *SousVide) InitTherm() error {
 	var err error
-	if s.Gpio.Stub && !*FakeTemp {
+	if *FakeTemp {
+		return nil
+	}
+
+	if s.Gpio.Stub {
 		s.Gpio.ThermFd, err = os.OpenFile(
 			"test_temp.txt", os.O_RDONLY | os.O_SYNC, 0666)
 		if err != nil {
@@ -57,7 +61,7 @@ func (s *SousVide) InitTherm() error {
 }
 
 func (s *SousVide) MeasureTemp() error {
-	if s.Gpio.Stub && *FakeTemp {
+	if *FakeTemp {
 		if s.Heating {
 			s.Temp += Celsius(10 * rand.Float64())
 		} else {
