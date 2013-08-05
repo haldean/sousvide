@@ -3,11 +3,14 @@ package main
 import (
 	"encoding/json"
 	"errors"
+	"flag"
 	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 )
+
+var port = flag.Int("port", 80, "port for web interface")
 
 func floatData(w http.ResponseWriter, req *http.Request, arg string) (float64, error) {
 	valStr := req.FormValue(arg)
@@ -78,11 +81,17 @@ func (s *SousVide) StartServer() {
 		http.Redirect(resp, req, "/", http.StatusSeeOther)
 	})
 
+	http.HandleFunc("/enable", func(w http.ResponseWriter, r *http.Request) {
+		s.Enabled = !s.Enabled
+		log.Printf("set enabled to %v", s.Enabled)
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+	})
+
 	http.HandleFunc("/csv", s.DumpCsv)
 
 	http.HandleFunc("/plot", s.GenerateChart)
 
 	http.Handle("/", http.FileServer(http.Dir("static/")))
 
-	log.Fatal(http.ListenAndServe(":80", nil))
+	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil))
 }

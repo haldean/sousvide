@@ -78,7 +78,7 @@ func (s *SousVide) StartControlLoop() {
 			log.Printf("could not read temperature: %v", err)
 		} else {
 			co := s.ControllerResult()
-			s.Heating = co > 0
+			s.Heating = co > 0 && s.Enabled
 			s.UpdateHardware()
 			s.checkpoint()
 		}

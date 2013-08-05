@@ -57,6 +57,11 @@
 				margin-top: -2pt;
 				color: #CCC;
 			}
+
+			#enabled {
+				color: #666;
+				text-decoration: none;
+			}
 		</style>
 		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro' rel='stylesheet' type='text/css'>
 
@@ -70,7 +75,10 @@
 			<table>
 				<tr>
 					<td class="label heater_label">Heater is:</td>
-					<td class="val"><span id="heating"></span></td>
+					<td class="val">
+						<a href="/enable" id="enabled"></a>,
+						<span id="heating"></span>
+					</td>
 				</tr>
 				<tr>
 					<td class="label temp_label">Current temperature:</td>

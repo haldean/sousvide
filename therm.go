@@ -67,6 +67,9 @@ func (s *SousVide) MeasureTemp() error {
 		} else {
 			s.Temp -= Celsius(10 * rand.Float64())
 		}
+		if s.Temp < 0 {
+			s.Temp = 0
+		}
 		return nil
 	}
 

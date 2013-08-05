@@ -23,6 +23,7 @@ var FakeTemp = flag.Bool("fake_temp", false, "use fake temperature values")
 
 type SousVide struct {
 	Heating     bool
+	Enabled 	bool
 	Temp        Celsius
 	Target      Celsius
 	History     []HistorySample
@@ -38,6 +39,7 @@ type SousVide struct {
 
 type HistorySample struct {
 	Time     time.Time
+	Enabled  bool
 	Heating  bool
 	Temp     float64
 	Target   float64
@@ -74,6 +76,7 @@ func New() *SousVide {
 func (s *SousVide) Snapshot() HistorySample {
 	return HistorySample{
 		Time:     time.Now(),
+		Enabled:  s.Enabled,
 		Heating:  s.Heating,
 		Temp:     float64(s.Temp),
 		Target:   float64(s.Target),

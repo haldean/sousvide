@@ -1,6 +1,7 @@
 var tempElem, absErrElem, targetElem, heatingElem, plotElem, accErrElem
 var targetDisplayElem, targetChangeElem, targetInputElem
 var pInputElem, iInputElem, dInputElem
+var enabledElem
 
 function getApiData() {
 	$.ajax({
@@ -25,6 +26,7 @@ function displayData(data) {
 	$(targetElem).text(target.toFixed(2));
 	$(absErrElem).text((err >= 0 ? '+' : '') + err.toFixed(2));
 	$(accErrElem).text(data.AccError.toFixed(2))
+	$(enabledElem).text(data.Enabled ? "ENABLED" : "DISABLED")
 
 	pInputElem.setAttribute('value', data.Pid.P)
 	iInputElem.setAttribute('value', data.Pid.I)
@@ -48,6 +50,7 @@ $(document).ready(function() {
 	heatingElem = document.getElementById('heating')
 	plotElem = document.getElementById('plot')
 	accErrElem = document.getElementById('acc_err')
+	enabledElem = document.getElementById('enabled')
 
 	targetChangeElem = document.getElementById('target_change')
 	targetDisplayElem = document.getElementById('target_display')
