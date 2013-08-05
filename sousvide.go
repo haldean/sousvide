@@ -2,8 +2,10 @@ package main
 
 import (
 	"bufio"
+	"encoding/json"
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"math"
 	"os"
 	"sync"
@@ -20,6 +22,7 @@ const (
 
 var StubGpio = flag.Bool("stub_gpio", false, "stub GPIO calls for testing")
 var FakeTemp = flag.Bool("fake_temp", false, "use fake temperature values")
+var PidFile = flag.String("pid_file", "pid.json", "file to save PID values in")
 
 type SousVide struct {
 	Heating     bool
@@ -122,16 +125,49 @@ func (s *SousVide) Error() Celsius {
 	return s.Target - s.Temp
 }
 
+func (s *SousVide) SavePid() {
+	fd, err := os.Create(*PidFile)
+	if err != nil {
+		fmt.Printf("could not save PID values: %v\n", err)
+		return
+	}
+	defer fd.Close()
+
+	b, err := json.Marshal(s.Pid)
+	if err != nil {
+		fmt.Printf("could not save PID values: %v\n", err)
+		return
+	}
+	fd.Write(b)
+}
+
+func (s *SousVide) LoadPid() error {
+	bytes, err := ioutil.ReadFile(*PidFile)
+	if err != nil {
+		fmt.Printf("could not load PID values: %v\n", err)
+		return err
+	}
+	err = json.Unmarshal(bytes, &s.Pid)
+	if err != nil {
+		fmt.Printf("could not load PID values: %v\n", err)
+		return err
+	}
+	return nil
+}
+
 func main() {
 	flag.Parse()
 
 	s := New()
-	s.Pid.P = 10
-	s.Pid.I = 0.1
-	s.Pid.D = 10
+	err := s.LoadPid()
+	if err != nil {
+		s.Pid.P = 10
+		s.Pid.D = 20
+		s.SavePid()
+	}
 	s.Gpio.Stub = *StubGpio
 
-	err := s.InitGpio()
+	err = s.InitGpio()
 	if err != nil {
 		fmt.Printf("could not initialize gpio: %v\n", err)
 		return

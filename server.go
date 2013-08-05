@@ -78,6 +78,7 @@ func (s *SousVide) StartServer() {
 		s.Pid.I = i
 		s.Pid.D = d
 		s.checkpoint()
+		s.SavePid()
 		http.Redirect(resp, req, "/", http.StatusSeeOther)
 	})
 
