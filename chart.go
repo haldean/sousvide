@@ -2,85 +2,84 @@ package main
 
 import (
 	"github.com/ajstarks/svgo"
-	"github.com/haldean/chart"
-	"github.com/haldean/chart/svgg"
-	"image/color"
 	"math"
 	"net/http"
 )
 
 const (
-	imgWidth  = 600
-	imgHeight = 400
-	useSvg    = true
+	ImgWidth  = 600
+	ImgHeight = 400
 )
 
-func (s *SousVide) GenerateChart(w http.ResponseWriter, req *http.Request) {
+func (s *SousVide) GenerateChart2(w http.ResponseWriter, r *http.Request) {
 	if len(s.History) == 0 {
 		w.WriteHeader(http.StatusNoContent)
 		return
 	}
-	c := chart.ScatterChart{}
 
-	c.Key.Hide = true
-	c.XRange.TicSetting.Hide = true
-	c.YRange.MinMode.Fixed = true
-	c.YRange.MinMode.Value = 0
-	c.YRange.TicSetting.Grid = 1
-	c.YRange.TicSetting.HideLabels = true
+	N := len(s.History)
 
-	c.XRange.Fixed(0, float64(len(s.History))+1, float64(len(s.History)/10))
-
-	temps := make([]chart.EPoint, 0, len(s.History))
-	targets := make([]chart.EPoint, 0, len(s.History))
-	errs := make([]chart.EPoint, 0, len(s.History))
-	var ep chart.EPoint
-	for i, h := range s.History {
-		ep = chart.EPoint{
-			X:      float64(i),
-			Y:      h.Temp,
-			DeltaX: math.NaN(),
-			DeltaY: math.NaN(),
+	maxVal := float64(0)
+	for _, h := range s.History {
+		if h.Temp > maxVal {
+			maxVal = h.Temp
 		}
-		temps = append(temps, ep)
-
-		ep = chart.EPoint{
-			X:      float64(i),
-			Y:      h.Target,
-			DeltaX: math.NaN(),
-			DeltaY: math.NaN(),
+		if h.Target > maxVal {
+			maxVal = h.Target
 		}
-		targets = append(targets, ep)
-
-		ep = chart.EPoint{
-			X:      float64(i),
-			Y:      math.Abs(h.Temp - h.Target),
-			DeltaX: math.NaN(),
-			DeltaY: math.NaN(),
-		}
-		errs = append(errs, ep)
 	}
+	maxY := 10 * math.Ceil(maxVal / 10)
+	pxPerUnitY := float64(ImgHeight) / maxY
 
-	c.AddData("Temperature", temps, chart.PlotStyleLines, chart.Style{
-		LineColor: color.NRGBA{0xFF, 0x00, 0x00, 0xFF}, LineWidth: 2,
-	})
-	c.AddData("Target", targets, chart.PlotStyleLines, chart.Style{
-		LineColor: color.NRGBA{0x00, 0x00, 0xFF, 0xFF}, LineWidth: 2,
-	})
-	c.AddData("Error", errs, chart.PlotStyleLines, chart.Style{
-		LineColor: color.NRGBA{0x00, 0x00, 0x00, 0x66}, LineWidth: 2,
-	})
+	maxX := float64(N - 1)
+	pxPerUnitX := float64(ImgWidth) / maxX
 
 	w.Header().Set("Content-type", "image/svg+xml")
 	svgs := svg.New(w)
-	svgs.Start(imgWidth, imgHeight)
+	svgs.Start(ImgWidth, ImgHeight)
 	svgs.Title("Temperature history (\u00B0C)")
-	canvas := svgg.New(
-		svgs, imgWidth, imgHeight, "monospace", 12,
-		color.RGBA{0xFF, 0xFF, 0xFF, 0xFF})
 
-	canvas.Begin()
-	c.Plot(canvas)
-	canvas.End()
+	// draw "metadata": heating, etc.
+	if N > 1 {
+		for i, h := range s.History {
+			if h.Heating {
+				x0 := int(float64(i) * pxPerUnitX)
+				svgs.Rect(x0, 0, int(math.Ceil(pxPerUnitX)), ImgHeight,
+				"fill:#F7F7F7")
+			}
+		}
+	}
+
+	// draw grid before data so it's under everything
+	even := true
+	for i := 0; i <= ImgHeight; i += int(5 * pxPerUnitY) {
+		y := ImgHeight - i
+		if even {
+			svgs.Line(0, y, ImgWidth, y, "stroke:#DDD; stroke-width:1")
+		} else {
+			svgs.Line(0, y, ImgWidth, y, "stroke:#EEE; stroke-width:1")
+		}
+		even = !even
+	}
+
+	// draw data
+	if N > 1 {
+		xs := make([]int, N)
+		temps := make([]int, N)
+		targets := make([]int, N)
+		for i, h := range s.History {
+			xs[i] = int(float64(i) * pxPerUnitX)
+			temps[i] = ImgHeight - int(h.Temp * pxPerUnitY)
+			targets[i] = ImgHeight - int(h.Target * pxPerUnitY)
+		}
+		svgs.Polyline(xs, temps, "stroke:#FF0000; stroke-width:1; fill:none")
+		svgs.Polyline(xs, targets, "stroke:#0000FF; stroke-width:1; fill:none")
+	}
+
+	// draw axes last so they're on top of everything else
+	svgs.Line(0, ImgHeight, ImgWidth, ImgHeight, "stroke:#000000; stroke-width:3")
+	svgs.Line(0, 0, 0, ImgHeight, "stroke:#000000; stroke-width:3")
+	svgs.Line(ImgWidth, 0, ImgWidth, ImgHeight, "stroke:#000000; stroke-width:3")
+
 	svgs.End()
 }
