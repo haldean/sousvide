@@ -13,7 +13,7 @@ import (
 )
 
 const (
-	InterruptDelay = 3 * time.Second
+	InterruptDelay = 1 * time.Second
 	LogFile        = "runlog.txt"
 	HistoryLength  = 2048
 	LowpassSamples = 2
@@ -23,6 +23,8 @@ const (
 var StubGpio = flag.Bool("stub_gpio", false, "stub GPIO calls for testing")
 var FakeTemp = flag.Bool("fake_temp", false, "use fake temperature values")
 var PidFile = flag.String("pid_file", "pid.json", "file to save PID values in")
+var StartEnabled = flag.Bool("enabled", false, "start with heater enabled")
+var StartTarget = flag.Float64("target", 0, "initial target temperature, in C")
 
 type SousVide struct {
 	Heating     bool
@@ -176,6 +178,8 @@ func main() {
 		s.SavePid()
 	}
 	s.Gpio.Stub = *StubGpio
+	s.Target = Celsius(*StartTarget)
+	s.Enabled = *StartEnabled
 
 	err = s.InitGpio()
 	if err != nil {

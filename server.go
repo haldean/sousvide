@@ -89,10 +89,7 @@ func (s *SousVide) StartServer() {
 	})
 
 	http.HandleFunc("/csv", s.DumpCsv)
-
-	http.HandleFunc("/plot", s.GenerateChart)
-
+	http.HandleFunc("/plot", s.GenerateChart2)
 	http.Handle("/", http.FileServer(http.Dir("static/")))
-
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", *port), nil))
 }
