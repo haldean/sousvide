@@ -45,34 +45,35 @@ func (s *SousVide) GenerateChart2(w http.ResponseWriter, r *http.Request) {
 			if h.Heating {
 				x0 := int(float64(i) * pxPerUnitX)
 				svgs.Rect(x0, 0, int(math.Ceil(pxPerUnitX)), ImgHeight,
-				"fill:#F0F0F0")
+				"fill:#F7F7F7")
 			}
 		}
 	}
 
 	// draw grid before data so it's under everything
-	for i := 0; i <= ImgHeight; i += int(10 * pxPerUnitY) {
+	even := true
+	for i := 0; i <= ImgHeight; i += int(5 * pxPerUnitY) {
 		y := ImgHeight - i
-		svgs.Line(0, y, ImgWidth, y, "stroke:#DDD; stroke-width:1")
+		if even {
+			svgs.Line(0, y, ImgWidth, y, "stroke:#DDD; stroke-width:1")
+		} else {
+			svgs.Line(0, y, ImgWidth, y, "stroke:#EEE; stroke-width:1")
+		}
+		even = !even
 	}
 
 	// draw data
 	if N > 1 {
-		lastX := int(0)
-		lastTempY := int(s.History[0].Temp * pxPerUnitY)
-		lastTargetY := int(s.History[0].Target * pxPerUnitY)
-		for i, h := range s.History[1:] {
-			x := int(float64(i + 1) * pxPerUnitX)
-			tempY := int(h.Temp * pxPerUnitY)
-			targetY := int(h.Target * pxPerUnitY)
-			svgs.Line(lastX, ImgHeight - lastTempY, x, ImgHeight - tempY,
-				"stroke:#FF0000; stroke-width:2")
-			svgs.Line(lastX, ImgHeight - lastTargetY, x, ImgHeight - targetY,
-				"stroke:#0000FF; stroke-width:2")
-			lastX = x
-			lastTempY = tempY
-			lastTargetY = targetY
+		xs := make([]int, N)
+		temps := make([]int, N)
+		targets := make([]int, N)
+		for i, h := range s.History {
+			xs[i] = int(float64(i) * pxPerUnitX)
+			temps[i] = ImgHeight - int(h.Temp * pxPerUnitY)
+			targets[i] = ImgHeight - int(h.Target * pxPerUnitY)
 		}
+		svgs.Polyline(xs, temps, "stroke:#FF0000; stroke-width:1; fill:none")
+		svgs.Polyline(xs, targets, "stroke:#0000FF; stroke-width:1; fill:none")
 	}
 
 	// draw axes last so they're on top of everything else
