@@ -19,7 +19,7 @@ func (s *SousVide) GenerateChart2(w http.ResponseWriter, r *http.Request) {
 
 	N := len(s.History)
 
-	maxVal := float64(0)
+	maxVal := float64(1)
 	for _, h := range s.History {
 		if h.Temp > maxVal {
 			maxVal = h.Temp
@@ -52,14 +52,17 @@ func (s *SousVide) GenerateChart2(w http.ResponseWriter, r *http.Request) {
 
 	// draw grid before data so it's under everything
 	even := true
-	for i := 0; i <= ImgHeight; i += int(5 * pxPerUnitY) {
-		y := ImgHeight - i
-		if even {
-			svgs.Line(0, y, ImgWidth, y, "stroke:#DDD; stroke-width:1")
-		} else {
-			svgs.Line(0, y, ImgWidth, y, "stroke:#EEE; stroke-width:1")
+	step := int(5 * pxPerUnitY)
+	if step >= 1 {
+		for i := 0; i <= ImgHeight; i += step {
+			y := ImgHeight - i
+			if even {
+				svgs.Line(0, y, ImgWidth, y, "stroke:#DDD; stroke-width:1")
+			} else {
+				svgs.Line(0, y, ImgWidth, y, "stroke:#EEE; stroke-width:1")
+			}
+			even = !even
 		}
-		even = !even
 	}
 
 	// draw data
