@@ -28,7 +28,7 @@ func (s *SousVide) GenerateChart2(w http.ResponseWriter, r *http.Request) {
 			maxVal = h.Target
 		}
 	}
-	maxY := 10 * math.Ceil(maxVal / 10)
+	maxY := 10 * math.Ceil(maxVal/10)
 	pxPerUnitY := float64(ImgHeight) / maxY
 
 	maxX := float64(N - 1)
@@ -45,7 +45,7 @@ func (s *SousVide) GenerateChart2(w http.ResponseWriter, r *http.Request) {
 			if h.Heating {
 				x0 := int(float64(i) * pxPerUnitX)
 				svgs.Rect(x0, 0, int(math.Ceil(pxPerUnitX)), ImgHeight,
-				"fill:#F7F7F7")
+					"fill:#F7F7F7")
 			}
 		}
 	}
@@ -72,8 +72,8 @@ func (s *SousVide) GenerateChart2(w http.ResponseWriter, r *http.Request) {
 		targets := make([]int, N)
 		for i, h := range s.History {
 			xs[i] = int(float64(i) * pxPerUnitX)
-			temps[i] = ImgHeight - int(h.Temp * pxPerUnitY)
-			targets[i] = ImgHeight - int(h.Target * pxPerUnitY)
+			temps[i] = ImgHeight - int(h.Temp*pxPerUnitY)
+			targets[i] = ImgHeight - int(h.Target*pxPerUnitY)
 		}
 		svgs.Polyline(xs, temps, "stroke:#FF0000; stroke-width:1; fill:none")
 		svgs.Polyline(xs, targets, "stroke:#0000FF; stroke-width:1; fill:none")

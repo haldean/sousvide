@@ -38,7 +38,7 @@ func (s *SousVide) InitTherm() error {
 
 	if s.Gpio.Stub {
 		s.Gpio.ThermFd, err = os.OpenFile(
-			"test_temp.txt", os.O_RDONLY | os.O_SYNC, 0666)
+			"test_temp.txt", os.O_RDONLY|os.O_SYNC, 0666)
 		if err != nil {
 			return err
 		}
@@ -50,7 +50,7 @@ func (s *SousVide) InitTherm() error {
 
 		s.Gpio.ThermFd, err = os.OpenFile(
 			fmt.Sprintf("/sys/bus/w1/devices/%s/w1_slave", serial),
-			os.O_RDONLY | os.O_SYNC, 0666)
+			os.O_RDONLY|os.O_SYNC, 0666)
 		if err != nil {
 			return err
 		}

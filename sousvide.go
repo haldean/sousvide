@@ -28,7 +28,7 @@ var StartTarget = flag.Float64("target", 0, "initial target temperature, in C")
 
 type SousVide struct {
 	Heating     bool
-	Enabled 	bool
+	Enabled     bool
 	Temp        Celsius
 	Target      Celsius
 	History     []HistorySample
@@ -36,7 +36,7 @@ type SousVide struct {
 	Gpio        GpioParams
 	DataLock    sync.Mutex
 	AccError    float64
-	MaxError	float64
+	MaxError    float64
 	lastPOutput float64
 	lastIOutput float64
 	lastDOutput float64
@@ -193,6 +193,7 @@ func main() {
 		return
 	}
 
+	go StartTimerUpdateLoop()
 	go s.StartControlLoop()
 	s.StartServer()
 }

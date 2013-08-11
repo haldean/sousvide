@@ -62,6 +62,27 @@
 				color: #666;
 				text-decoration: none;
 			}
+
+			.time {
+				width: 24pt;
+				text-align: center;
+			}
+
+			.expired {
+				color: #F00;
+			}
+
+			#timers form {
+				margin-left: 10pt;
+				display: inline;
+			}
+
+			input[type=submit] {
+				border: 1px solid #DDD;
+				background: #FFF;
+				position: relative;
+				top: -1px;
+			}
 		</style>
 		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro' rel='stylesheet' type='text/css'>
 
@@ -70,6 +91,19 @@
 	</head>
 	<body>
 		<h1>sousvide control</h1>
+		<section>
+			<h2>timers</h2>
+			<table id="timers">
+			</table>
+			<form action="/timer" method="POST">
+				<input type="text" name="name" placeholder="New timer">
+				<input type="text" name="h" placeholder="HH" class="time">
+				<input type="text" name="m" placeholder="MM" class="time">
+				<input type="text" name="s" placeholder="SS" class="time">
+				<input type="submit" value="save">
+			</form>
+			<audio id="timernoise" src="/finished.wav" preload="auto" volume="1"></audio>
+		</section>
 		<section>
 			<h2>status</h2>
 			<table>

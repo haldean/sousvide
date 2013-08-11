@@ -45,12 +45,16 @@ func setHeaterOutputMode() error {
 }
 
 func (s *SousVide) InitGpio() error {
+	var err error
 	if s.Gpio.Stub {
-		s.Gpio.HeaterFd = os.Stdout
+		s.Gpio.HeaterFd, err = os.Open("/dev/null")
+		if err != nil {
+			log.Fatalf("could not open /dev/null: %v", err)
+		}
 		return nil
 	}
 
-	err := checkHeaterExported()
+	err = checkHeaterExported()
 	if err != nil {
 		return err
 	}
