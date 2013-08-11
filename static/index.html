@@ -2,11 +2,11 @@
 <html>
 	<head>
 		<title>sousvide</title>
+    <link rel="stylesheet" media="screen and (min-device-width: 800px)" href="screen.css" />
 		<style>
 			body {
 				font-family: 'Source Sans Pro', sans-serif;
-				margin: 50px 50px;
-				max-width: 600px;
+				margin: 50px;
 				font-size: 14pt;
 			}
 
@@ -83,6 +83,11 @@
 				position: relative;
 				top: -1px;
 			}
+
+      #enable_audio {
+        margin-top: 12pt;
+        font-size: 22pt;
+      }
 		</style>
 		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro' rel='stylesheet' type='text/css'>
 
@@ -102,7 +107,8 @@
 				<input type="text" name="s" placeholder="SS" class="time">
 				<input type="submit" value="save">
 			</form>
-			<audio id="timernoise" src="/finished.wav" preload="auto" volume="1"></audio>
+      <input type="submit" value="enable timer audio" id="enable_audio">
+			<audio id="timernoise" src="/finished.ogg" preload="auto" volume="1"></audio>
 		</section>
 		<section>
 			<h2>status</h2>

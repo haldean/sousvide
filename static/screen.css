@@ -1,0 +1,7 @@
+body {
+	max-width: 600px;
+}
+
+#enable_audio {
+	display: none;
+}

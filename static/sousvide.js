@@ -140,5 +140,10 @@ $(document).ready(function() {
 
 	timerElem = document.getElementById('timers')
 	timerAudio = document.getElementById('timernoise')
+  audioEnable = document.getElementById('enable_audio')
+  audioEnable.onclick = function() {
+    $(audioEnable).css('display', 'none')
+    timerAudio.play()
+  }
 	getTimerData()
 })
