@@ -104,6 +104,10 @@ function displayTimers(data) {
 	timerElem.innerHTML = ''
 	for (var i = 0; i < data.length; i++) {
 		timer = data[i]
+    console.log(timer)
+    if (timer.Expired) {
+      timerAudio.play()
+    }
 		timerElem.appendChild(makeTimer(timer));
 	}
 }
@@ -136,6 +140,5 @@ $(document).ready(function() {
 
 	timerElem = document.getElementById('timers')
 	timerAudio = document.getElementById('timernoise')
-	timerAudio.play()
 	getTimerData()
 })

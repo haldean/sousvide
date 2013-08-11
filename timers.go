@@ -27,7 +27,7 @@ var nextId = int64(0)
 func StartTimerUpdateLoop() {
 	for _ = range time.Tick(time.Second) {
 		for _, t := range timers {
-			t.TimeRemaining = time.Now().Sub(t.ExpiresAt)
+			t.TimeRemaining = t.ExpiresAt.Sub(time.Now())
 			t.Expired = t.TimeRemaining < 0
 		}
 	}
