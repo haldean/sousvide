@@ -1,0 +1,72 @@
+@import url(http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700,400italic,700italic|Source+Code+Pro);
+
+body {
+  color: #000;
+  background: #FFF;
+
+  width: 33em;
+  margin: 6em auto;
+
+  font-family: 'Source Sans Pro', sans-serif;
+  font-size: 14pt;
+  line-height: 1.5;
+}
+
+h1 { font-size:2.25em;  /* 16x2.25=36 */ }
+h2 { font-size:1.5em;   /* 16x1.5=24 */ }
+h3 { font-size:1.125em; /* 16x1.125=18 */ }
+h4 { font-size:0.875em; /* 16x0.875=14 */ }
+
+p {
+  margin-bottom: 0;
+  text-align: justify;
+  hyphenate: auto;
+  hyphenate-before:2;
+  hyphenate-after:3;
+}
+
+/* all paragraphs that are proceeded by another paragraph */
+p + p {
+  margin-top: 0;
+  text-indent: 1em;
+}
+
+img {
+  width: 100%;
+}
+
+figcaption {
+  text-align: center;
+  font-size: 0.875em;
+  font-style: italic;
+}
+
+figure {
+  margin: 2em;
+}
+
+h3 {
+  margin-top: 5em;
+}
+
+pre {
+  background: #EEE;
+  padding: .5em;
+  margin: 1em 2em;
+
+  font-family: 'Source Code Pro', monospace;
+}
+
+code {
+  background: #EEE;
+  padding: .25em;
+}
+
+a {
+  color: #268bd2;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #1a6192;
+}
