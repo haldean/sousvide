@@ -18,6 +18,13 @@ CSS: style.css
   line-height: 1.2;
   padding-bottom: 4em;
 }
+
+.tiny {
+  font-size: 0.625em;
+  font-style: italic;
+  text-align: center;
+  padding-bottom: 3em;
+}
 </style>
 
 <div id="header">
@@ -29,6 +36,11 @@ Modernist cuisine for hackers
 </div>
 
 ![](steak.jpg)
+
+<p class="tiny">This page appears as
+[haldean.org/sousvide](http://haldean.org/sousvide) and as
+[haldean.github.io/sousvide](http://haldean.github.io/sousvide). Last updated 18
+Aug, 2013.</p>
 
 When one cooks meat, the goal is to get the internal temperature of the meat to
 whatever value indicates that the meat is tender and delcious. For most meats,
