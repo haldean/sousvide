@@ -1,37 +1,14 @@
 Title: Sous Vide from Scratch
 Author: Will Haldean Brown
 CSS: style.css
-
-<style>
-#header h1 {
-  padding: 50px 0 0 0;
-  margin: 0;
-}
-
-#header h2 {
-  margin: 0;
-}
-
-#header {
-  float: left;
-  width: 100%;
-  line-height: 1.2;
-  padding-bottom: 4em;
-}
-
-.tiny {
-  font-size: 0.625em;
-  font-style: italic;
-  text-align: center;
-  padding-bottom: 3em;
-}
-</style>
+CSS: extra.css
+HTML header: <link rel="stylesheet" media="screen and (min-device-width: 800px)" href="screen.css" />
 
 <div id="header">
 Sous Vide from Scratch
 ======
 
-Modernist cuisine for hackers
+Modernist cuisine for makers
 ------
 </div>
 
