@@ -116,7 +116,7 @@ The total BoM cost for the electronics and hardware came out to $128.
 [occidentalis]: http://learn.adafruit.com/adafruit-raspberry-pi-educational-linux-distro/occidentalis-v0-dot-2
 [wifi]: http://www.amazon.com/gp/product/B006ZZUK5Y/
 [picobbler]: http://learn.adafruit.com/adafruit-pi-cobbler-kit/overview
-[oshpark]: http://oshpark.com/shared_projects/7Hz0psmY
+[oshpark]: http://oshpark.com/shared_projects/UvBjOJIR/
 [github]: https://github.com/haldean/sousvide
 
 ### User Interface
