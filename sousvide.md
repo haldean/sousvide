@@ -152,15 +152,16 @@ dedicated to graphics memory and another quarter is used by the OS.
 The controller uses a variation on a [PID controller][pid] to determine whether
 the heaters should be on or off. Since the output of the control loop must, by
 nature of the hardware, be binary (the heaters cannot be half-on; they are
-either on or off), two aspects of the traditional PID controller do not apply:
+either on or off), three aspects of the traditional PID controller do not apply:
 
 - The output of a PID controller is continuous and unbounded, but I need a
   single binary output, so the continuous output has to be mapped to a binary
   on/off somehow.
-- The integral term of a PID controller has no purpose. From a handwavey
-  perspective, the purpose of the integral term is to make the machine "try
-  harder" when the system is not responding adequately to the control. In the
-  case where the controller gives a binary output, "try harder" has no meaning.
+- The integral term of a PID controller is pointless in a binary system. From a
+  handwavey perspective, the purpose of the integral term is to make the machine
+  "try harder" when the system is not responding adequately to the control. In
+  the case where the controller gives a binary output, "try harder" has no
+  meaning.
 - The integral term will often cause an overshoot in a slow-moving system like
   this one, and it's more important that the food never exceed the cooking
   temperature than that it heats up quickly for cooking sous-vide.
@@ -177,7 +178,7 @@ very proactive in turning them off when you get close to the target value.
 
 The second unusual thing I did was that I binarized the output of the
 controller; an output from the controller of greater than zero corresponds to
-heaters-on, and zero or less corresponds to zero-off. Doing this has the nice
+heaters-on, and zero or less corresponds to heaters-off. Doing this has the nice
 property that constant scaling factors do not matter when tuning the PID
 parameters; since only the sign of the output is used, it does not matter if the
 parameters are scaled because the sign will not change.
