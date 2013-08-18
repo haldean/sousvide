@@ -87,13 +87,17 @@ temperature sensor.
 
 ![Schematic of the PCB designed for the SV2 build.](schematic.png)
 
+![PCB layout for the SV2 build.](board.png)
+
 For the SV1 build, I connected the Rasperry Pi to the peripherials using a [Pi
 Cobbler][picobbler] from Adafruit and a breadboard. For the SV2 build, I
 designed a PCB to serve as a breakout from the Raspberry Pi's GPIO header to the
 necessary peripherials; the designs for the PCB can be seen in the [`pcb`
 directory of the project][github] and can be ordered from [OSH Park][oshpark].
 
-![PCB layout for the SV2 build.](board.png)
+![The SV2 build with the PCB.](casepcb.jpg)
+
+![The PCB (populated and unpopulated) for the SV2 build.](pcb.jpg)
 
 The SV2 board also adds some status LEDs; there is an LED for displaying system
 power, an LED for displaying whether the heater is on and a status LED whose
