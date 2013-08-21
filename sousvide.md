@@ -1,6 +1,6 @@
 Title: Sous Vide from Scratch
 Author: Will Haldean Brown
-CSS: http://haldean.org/style.css
+CSS: http://haldean.org/content.css
 CSS: extra.css
 HTML header: <link rel="stylesheet" media="screen and (min-device-width: 800px)" href="http://haldean.org/screen.css" />
 
