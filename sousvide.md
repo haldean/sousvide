@@ -191,7 +191,25 @@ the system starts cooling down, even if it's above the target, the controller
 needs to turn the heaters on in anticipation because they take a while to come
 to temperature.
 
+#### Why not use PWM?
+
+I've gotten this question a couple of times. [Pulse-width modulation (PWM)][pwm]
+is a method of "dimming" a device that typically only has two states, on or off,
+that works by switching the device on and off rapidly many hundreds or thousands
+of times a second. It could work well in the sous vide system as a method for
+turning the heaters partially on, which would let me (theoretically) maintain a
+more accurate temperature in the water bath.
+
+The reason I didn't use PWM is because high-frequency switching of mains-voltage
+AC loads is tricky, potentially dangerous (high frequency switching generates a
+lot of heat), and unnecessary for this; it's able to maintain an accurate
+temperature without any sort of PWM. The same argument goes for [waveform
+clipping][clipper]; although it's not dangerous, it can be tricky to get right
+and it's not needed.
+
 [pid]: http://en.wikipedia.org/wiki/PID_controller
+[pwm]: http://en.wikipedia.org/wiki/Pulse-width_modulation
+[clipper]: http://en.wikipedia.org/wiki/Clipper_(electronics)
 
 ### Physical design
 

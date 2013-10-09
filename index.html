@@ -55,7 +55,7 @@ describe how to build one assuming you have a PID controller, or using a
 hacked-together UI. I wanted to build a professional-quality controller in an
 integrated system, and I couldn&#8217;t find anyone else that had done so and posted
 documentation. If anything here is unclear or missing detail, please don&#8217;t
-hesitate to email <a href="&#x6d;&#x61;&#x69;&#108;&#116;&#111;&#58;&#115;&#x6f;&#x75;&#115;&#x76;&#105;&#100;&#x65;&#x40;&#x68;&#x61;&#108;&#100;&#x65;&#x61;&#x6e;&#x2e;&#111;&#x72;&#x67;">&#115;&#111;&#x75;&#x73;&#118;&#105;&#x64;&#101;&#x40;&#x68;&#x61;&#x6c;&#x64;&#x65;&#97;&#x6e;&#46;&#x6f;&#x72;&#103;</a> with any questions or suggestions
+hesitate to email <a href="&#x6d;&#97;&#x69;&#x6c;&#x74;&#x6f;&#58;&#115;&#x6f;&#x75;&#115;&#x76;&#105;&#x64;&#x65;&#64;&#104;&#97;&#108;&#100;&#x65;&#97;&#x6e;&#x2e;&#111;&#114;&#103;">&#x73;&#x6f;&#x75;&#x73;&#118;&#105;&#100;&#x65;&#x40;&#x68;&#97;&#x6c;&#100;&#x65;&#x61;&#x6e;&#x2e;&#111;&#x72;&#103;</a> with any questions or suggestions
 for additions to this page.</p>
 
 <p>I started designing and building my sous vide in July 2013. As of August, I&#8217;ve
@@ -198,6 +198,22 @@ controller has to compensate by turning off the heaters early. Conversely, when
 the system starts cooling down, even if it&#8217;s above the target, the controller
 needs to turn the heaters on in anticipation because they take a while to come
 to temperature.</p>
+
+<h4 id="whynotusepwm">Why not use PWM?</h4>
+
+<p>I&#8217;ve gotten this question a couple of times. <a href="http://en.wikipedia.org/wiki/Pulse-width_modulation">Pulse-width modulation (PWM)</a>
+is a method of &#8220;dimming&#8221; a device that typically only has two states, on or off,
+that works by switching the device on and off rapidly many hundreds or thousands
+of times a second. It could work well in the sous vide system as a method for
+turning the heaters partially on, which would let me (theoretically) maintain a
+more accurate temperature in the water bath.</p>
+
+<p>The reason I didn&#8217;t use PWM is because high-frequency switching of mains-voltage
+AC loads is tricky, potentially dangerous (high frequency switching generates a
+lot of heat), and unnecessary for this; it&#8217;s able to maintain an accurate
+temperature without any sort of PWM. The same argument goes for <a href="http://en.wikipedia.org/wiki/Clipper_(electronics)">waveform
+clipping</a>; although it&#8217;s not dangerous, it can be tricky to get right
+and it&#8217;s not needed.</p>
 
 <h3 id="physicaldesign">Physical design</h3>
 
