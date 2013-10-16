@@ -10,7 +10,25 @@
 		<script src="sousvide.js"></script>
 	</head>
 	<body>
-        <div id="temp_container"><span id="temp"></span> &deg;C</div>
+		<h1><a href="http://263a.net">0x263A</a> &mdash; SV2.1.0</h1>
+		<div id="floater">
+			<div id="display">
+				<div id="temp_container"><span id="temp"></span> &deg;C</div>
+				<div id="target_container">
+					<span class="label">target</span>
+					<span id="target"></span> &deg;C
+				</div>
+				<div id="error_container">
+					<span class="label">offset</span>
+					<span id="abs_err"></span> &deg;C
+				</div>
+			</div>
+			<div id="buttonbar">
+				<a id="button_enable" href="/enable">Enabled</a>
+				<a id="button_disable" href="/disable">Disabled</a>
+			</div>
+		</div>
+
 		<section style="display:none;">
 			<h2>timers</h2>
 			<table id="timers">
@@ -29,21 +47,10 @@
 			<h2>status</h2>
 			<table>
 				<tr>
-					<td class="label heater_label">Heater is:</td>
-					<td class="val">
-						<a href="/enable" id="enabled"></a>,
-						<span id="heating"></span>
-					</td>
-				</tr>
-				<tr>
-					<td class="label temp_label">Current temperature:</td>
-					<td class="val"><span id="old_temp"></span> &deg;C</td>
-				</tr>
-				<tr>
 					<td class="label target_label">Target temperature:</td>
 					<td class="val">
 						<span id="target_display">
-							<span id="target"></span> &deg;C
+							<span id="old_target"></span> &deg;C
 						</span>
 						<span id="target_change">
 							<form method="POST" action="/target">
@@ -52,10 +59,6 @@
 							</form>
 						</span>
 					</td>
-				</tr>
-				<tr>
-					<td class="label error_label">Error:</td>
-					<td class="val" id="err_td"><span id="abs_err"></span> &deg;C</td>
 				</tr>
 				<tr>
 					<td class="label">

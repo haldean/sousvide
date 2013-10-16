@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 )
 
@@ -18,4 +20,19 @@ func (s *SousVide) DumpCsv(w http.ResponseWriter, _ *http.Request) {
 	for _, h := range s.History {
 		w.Write([]byte(h.ToCsv()))
 	}
+}
+
+func (s *SousVide) DumpJson(w http.ResponseWriter, _ *http.Request) {
+	w.Header().Set("Content-type", "application/json")
+
+	if len(s.History) == 0 {
+		w.WriteHeader(http.StatusNoContent)
+		return
+	}
+
+	b, err := json.Marshal(s.History)
+	if err != nil {
+		log.Panicf("could not marshal historical data to json: %v", err)
+	}
+	w.Write(b)
 }

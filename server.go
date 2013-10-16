@@ -98,13 +98,25 @@ func (s *SousVide) StartServer() {
 	})
 
 	http.HandleFunc("/enable", func(w http.ResponseWriter, r *http.Request) {
-		s.Enabled = !s.Enabled
+		s.Enabled = true
 		log.Printf("set enabled to %v", s.Enabled)
-		http.Redirect(w, r, "/", http.StatusSeeOther)
+		w.Write([]byte("success"))
+	})
+	http.HandleFunc("/disable", func(w http.ResponseWriter, r *http.Request) {
+		s.Enabled = false
+		log.Printf("set enabled to %v", s.Enabled)
+		w.Write([]byte("success"))
 	})
 
-	http.HandleFunc("/csv", s.DumpCsv)
-	http.HandleFunc("/plot", s.GenerateChart2)
+	http.HandleFunc("/csv", func(w http.ResponseWriter, r *http.Request) {
+		s.DumpCsv(w, r)
+	})
+	http.HandleFunc("/json", func(w http.ResponseWriter, r *http.Request) {
+		s.DumpJson(w, r)
+	})
+	http.HandleFunc("/plot", func(w http.ResponseWriter, r *http.Request) {
+		s.GenerateChart2(w, r)
+	})
 	http.HandleFunc("/timer", AddTimerHandler)
 	http.HandleFunc("/timers", GetTimersHandler)
 	http.HandleFunc("/delete_timer", DeleteTimerHandler)

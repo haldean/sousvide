@@ -33,6 +33,7 @@ func findSerial() (string, error) {
 func (s *SousVide) InitTherm() error {
 	var err error
 	if *FakeTemp {
+		s.Temp = s.Target
 		return nil
 	}
 
@@ -65,7 +66,9 @@ func (s *SousVide) MeasureTemp() error {
 		if s.Heating {
 			s.Temp += Celsius(10 * rand.Float64())
 		} else {
-			s.Temp -= Celsius(10 * rand.Float64())
+			if rand.Int() % 3 == 0 {
+				s.Temp -= Celsius(rand.Float64())
+			}
 		}
 		if s.Temp < 0 {
 			s.Temp = 0

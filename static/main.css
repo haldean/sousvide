@@ -1,98 +1,105 @@
 @font-face {
     font-family: 'Norwester';
     src: url('webfonts/norwester.eot');
-    src: local('Norwester'), 
-         local('Norwester Regular'), 
+    src: local('Norwester'),
+         local('Norwester Regular'),
          url('webfonts/norwester.woff') format('woff'),
          url('webfonts/norwester.ttf') format('truetype'),
-         url('webfonts/norwester.svg#font') format('svg'); 
+         url('webfonts/norwester.svg#font') format('svg');
 }
 
 body {
     font-family: 'Source Sans Pro', sans-serif;
-    margin: 50px;
     font-size: 14pt;
+	background: #FE4F00;
+	margin: 0;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-weight: normal;
+#floater {
+	position: fixed;
+	right: 32pt;
+	top: 32pt;
+	font-family: Norwester, monospace;
+	width: 500pt;
 }
 
-section {
-    border-left: 7pt solid #EEE;
-    padding-left: 10pt;
+#display {
+	background: #FFF;
+	padding: 32pt;
+	text-align: right;
 }
 
-.val {
-    font-weight: bold;
-    text-align: right;
-    font-family: Norwester, monospace;
-    font-size: 18pt;
+#temp_container {
+	font-size: 64pt;
+	text-align: right;
 }
 
-table {
-    width: 100%;
+#temp {
+	font-size: 128pt;
 }
 
-#plot {
-    margin-top: 14pt;
-    width: 100%;
+#target_container, #error_container {
+	font-size: 24pt;
+	line-height: 32pt;
+	text-align: right;
+	display: inline;
+	margin-left: 16pt;
 }
 
-.label {
-    border-left: 14pt solid #FFF;
-    padding-left: 14pt;
-}
-.temp_label { border-color: #F00; }
-.target_label { border-color: #00F; }
-.error_label { border-color: #666; }
-.hot { color: #F00; }
-
-#target_change {
-    display: none;
+#target_container {
+	position: absolute;
+	right: 250pt;
 }
 
-#target_input, .pid_param {
-    font-size: 18pt;
-    font-family: 'Source Code Pro', monospace;
-    width: 100pt;
-    text-align: right;
+#target, #abs_err {
+	font-size: 32pt;
 }
 
-.subtext {
-    display: block;
-    font-size: 9pt;
-    margin-top: -2pt;
-    color: #CCC;
+#display .label {
+	color: #FFB213;
 }
 
-#enabled {
-    color: #666;
-    text-decoration: none;
+#buttonbar {
+	width: 500pt;
+	float: left;
+	background: #FFB213;
+	color: #FE4F00;
 }
 
-.time {
-    width: 24pt;
-    text-align: center;
+#buttonbar a {
+	display: block;
+	width: 216pt;
+	padding: 8pt 16pt;
+	text-transform: uppercase;
+	color: #FE4F00;
+	text-decoration: none;
 }
 
-.expired {
-    color: #F00;
+#buttonbar #button_enable {
+	float: left;
 }
 
-#timers form {
-    margin-left: 10pt;
-    display: inline;
+#buttonbar #button_disable {
+	float: right;
+	text-align: right;
 }
 
-input[type=submit] {
-    border: 1px solid #DDD;
-    background: #FFF;
-    position: relative;
-    top: -1px;
+#buttonbar .selected {
+	background: #FFF;
+	color: #FFB213;
 }
 
-#enable_audio {
-    margin-top: 12pt;
-    font-size: 22pt;
+h1 {
+	font-size: 12pt;
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	bottom: 16pt;
+	right: 32pt;
+	color: #FFB213;
+}
+
+h1 a {
+	color: #FFB213;
+	text-decoration: none;
 }

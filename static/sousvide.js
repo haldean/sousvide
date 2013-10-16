@@ -1,8 +1,32 @@
+// store 3 hours of data for graphing
+var MAX_TEMP_STORE = 60 * 60 * 3;
+var temps = new Array();
+
 var tempElem, absErrElem, targetElem, heatingElem, plotElem, accErrElem
 var targetDisplayElem, targetChangeElem, targetInputElem
 var pInputElem, iInputElem, dInputElem
 var enabledElem, maxErrElem
 var timerElem, timerAudio
+
+var enableButton, disableButton
+
+function primeTempCache() {
+	$.ajax({
+		url: '/json',
+		type: 'json',
+		success: function(resp) {
+			for (var i = 0; i < resp.length; i++) {
+				temps.push(resp[i].Temp);
+				if (temps.length > MAX_TEMP_STORE) {
+					temps.shift();
+				}
+			}
+			console.log("initialized temps to:");
+			console.log(temps);
+			getApiData();
+		}
+	})
+}
 
 function getApiData() {
 	$.ajax({
@@ -21,26 +45,31 @@ function displayData(data) {
 		target = data.Target,
 		err = temp - target;
 
-	$(tempElem).text(temp.toFixed(2));
+	if (temp != undefined) {
+		temps.push(temp);
+		while (temps.length > MAX_TEMP_STORE) {
+			temps.shift();
+		}
+	}
+
+	$(tempElem).text(temp.toFixed(1));
 	$(targetElem).text(target.toFixed(2));
 	$(absErrElem).text((err >= 0 ? '+' : '') + err.toFixed(2));
+
+	if (data.Enabled) {
+		$(enableButton).addClass('selected')
+		$(disableButton).removeClass('selected')
+	} else {
+		$(enableButton).removeClass('selected')
+		$(disableButton).addClass('selected')
+	}
+
 	$(accErrElem).text(data.AccError.toFixed(2))
 	$(maxErrElem).text(data.MaxError.toFixed(2))
-	$(enabledElem).text(data.Enabled ? "ENABLED" : "DISABLED")
 
 	pInputElem.setAttribute('value', data.Pid.P)
 	iInputElem.setAttribute('value', data.Pid.I)
 	dInputElem.setAttribute('value', data.Pid.D)
-
-	if (data.Heating) {
-		$(heatingElem).addClass('hot')
-		$(heatingElem).removeClass('cold')
-		$(heatingElem).text('ON')
-	} else {
-		$(heatingElem).addClass('cold')
-		$(heatingElem).removeClass('hot')
-		$(heatingElem).text('OFF')
-	}
 }
 
 function getTimerData() {
@@ -104,18 +133,40 @@ function displayTimers(data) {
 	timerElem.innerHTML = ''
 	for (var i = 0; i < data.length; i++) {
 		timer = data[i]
-    console.log(timer)
-    if (timer.Expired) {
-      timerAudio.play()
-    }
+		console.log(timer)
+		if (timer.Expired) {
+			timerAudio.play()
+		}
 		timerElem.appendChild(makeTimer(timer));
 	}
+}
+
+function attachRequest(elem, path, data) {
+	$(elem).click(function(e) {
+		// add spinnery thing
+		$.ajax({
+			url: path,
+			data: data,
+			type: 'html',
+			success: function(resp) {
+				console.log("got response to " + path + ": " + resp);
+			}
+		})
+		e.preventDefault();
+	});
+	console.log("sent onclick for elem to " + path)
 }
 
 $(document).ready(function() {
 	tempElem = document.getElementById('temp')
 	absErrElem = document.getElementById('abs_err')
 	targetElem = document.getElementById('target')
+
+	enableButton = document.getElementById('button_enable')
+	attachRequest(enableButton, "/enable");
+	disableButton = document.getElementById('button_disable')
+	attachRequest(disableButton, "/disable");
+
 	heatingElem = document.getElementById('heating')
 	plotElem = document.getElementById('plot')
 	accErrElem = document.getElementById('acc_err')
@@ -136,14 +187,14 @@ $(document).ready(function() {
 		targetInputElem.setAttribute('value', $(targetElem).text())
 	}
 
-	getApiData()
+	primeTempCache()
 
 	timerElem = document.getElementById('timers')
 	timerAudio = document.getElementById('timernoise')
-  audioEnable = document.getElementById('enable_audio')
-  audioEnable.onclick = function() {
-    $(audioEnable).css('display', 'none')
-    timerAudio.play()
-  }
+	audioEnable = document.getElementById('enable_audio')
+	audioEnable.onclick = function() {
+		$(audioEnable).css('display', 'none')
+		timerAudio.play()
+	}
 	getTimerData()
 })

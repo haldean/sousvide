@@ -15,7 +15,7 @@ import (
 const (
 	InterruptDelay = 1 * time.Second
 	LogFile        = "runlog.txt"
-	HistoryLength  = 4096
+	HistoryLength  = 8192
 	LowpassSamples = 2
 	AccErrorWindow = 32
 )
