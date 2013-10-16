@@ -2,101 +2,16 @@
 <html>
 	<head>
 		<title>sousvide</title>
-    <link rel="stylesheet" media="screen and (min-device-width: 800px)" href="screen.css" />
-		<style>
-			body {
-				font-family: 'Source Sans Pro', sans-serif;
-				margin: 50px;
-				font-size: 14pt;
-			}
-
-			section {
-				border-left: 7pt solid #EEE;
-				padding-left: 10pt;
-			}
-
-			.val {
-				font-weight: bold;
-				text-align: right;
-				font-family: 'Source Code Pro', monospace;
-				font-size: 18pt;
-			}
-
-			table {
-				width: 100%;
-			}
-
-			#plot {
-				margin-top: 14pt;
-				width: 100%;
-			}
-
-			.label {
-				border-left: 14pt solid #FFF;
-				padding-left: 14pt;
-			}
-			.temp_label { border-color: #F00; }
-			.target_label { border-color: #00F; }
-			.error_label { border-color: #666; }
-			.hot { color: #F00; }
-
-			#target_change {
-				display: none;
-			}
-
-			#target_input, .pid_param {
-				font-size: 18pt;
-				font-family: 'Source Code Pro', monospace;
-				width: 100pt;
-				text-align: right;
-			}
-
-			.subtext {
-				display: block;
-				font-size: 9pt;
-				margin-top: -2pt;
-				color: #CCC;
-			}
-
-			#enabled {
-				color: #666;
-				text-decoration: none;
-			}
-
-			.time {
-				width: 24pt;
-				text-align: center;
-			}
-
-			.expired {
-				color: #F00;
-			}
-
-			#timers form {
-				margin-left: 10pt;
-				display: inline;
-			}
-
-			input[type=submit] {
-				border: 1px solid #DDD;
-				background: #FFF;
-				position: relative;
-				top: -1px;
-			}
-
-      #enable_audio {
-        margin-top: 12pt;
-        font-size: 22pt;
-      }
-		</style>
+        <link rel="stylesheet" media="screen and (min-device-width: 800px)" href="screen.css" />
+        <link rel="stylesheet" href="main.css" />
 		<link href='http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,700|Source+Code+Pro' rel='stylesheet' type='text/css'>
 
 		<script src="http://cdn.enderjs.com/ender.min.js"></script>
 		<script src="sousvide.js"></script>
 	</head>
 	<body>
-		<h1>sousvide control</h1>
-		<section>
+        <div id="temp_container"><span id="temp"></span> &deg;C</div>
+		<section style="display:none;">
 			<h2>timers</h2>
 			<table id="timers">
 			</table>
@@ -110,7 +25,7 @@
       <input type="submit" value="enable timer audio" id="enable_audio">
 			<audio id="timernoise" src="/finished.ogg" preload="auto" volume="1"></audio>
 		</section>
-		<section>
+		<section style="display:none;">
 			<h2>status</h2>
 			<table>
 				<tr>
@@ -122,7 +37,7 @@
 				</tr>
 				<tr>
 					<td class="label temp_label">Current temperature:</td>
-					<td class="val"><span id="temp"></span> &deg;C</td>
+					<td class="val"><span id="old_temp"></span> &deg;C</td>
 				</tr>
 				<tr>
 					<td class="label target_label">Target temperature:</td>
@@ -163,7 +78,7 @@
 			</table>
 			<img src="/plot" id="plot">
 		</section>
-		<section>
+		<section style="display:none">
 			<h2>controller</h2>
 			<form method="POST" action="/pid">
 				<table>

@@ -1,0 +1,98 @@
+@font-face {
+    font-family: 'Norwester';
+    src: url('webfonts/norwester.eot');
+    src: local('Norwester'), 
+         local('Norwester Regular'), 
+         url('webfonts/norwester.woff') format('woff'),
+         url('webfonts/norwester.ttf') format('truetype'),
+         url('webfonts/norwester.svg#font') format('svg'); 
+}
+
+body {
+    font-family: 'Source Sans Pro', sans-serif;
+    margin: 50px;
+    font-size: 14pt;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-weight: normal;
+}
+
+section {
+    border-left: 7pt solid #EEE;
+    padding-left: 10pt;
+}
+
+.val {
+    font-weight: bold;
+    text-align: right;
+    font-family: Norwester, monospace;
+    font-size: 18pt;
+}
+
+table {
+    width: 100%;
+}
+
+#plot {
+    margin-top: 14pt;
+    width: 100%;
+}
+
+.label {
+    border-left: 14pt solid #FFF;
+    padding-left: 14pt;
+}
+.temp_label { border-color: #F00; }
+.target_label { border-color: #00F; }
+.error_label { border-color: #666; }
+.hot { color: #F00; }
+
+#target_change {
+    display: none;
+}
+
+#target_input, .pid_param {
+    font-size: 18pt;
+    font-family: 'Source Code Pro', monospace;
+    width: 100pt;
+    text-align: right;
+}
+
+.subtext {
+    display: block;
+    font-size: 9pt;
+    margin-top: -2pt;
+    color: #CCC;
+}
+
+#enabled {
+    color: #666;
+    text-decoration: none;
+}
+
+.time {
+    width: 24pt;
+    text-align: center;
+}
+
+.expired {
+    color: #F00;
+}
+
+#timers form {
+    margin-left: 10pt;
+    display: inline;
+}
+
+input[type=submit] {
+    border: 1px solid #DDD;
+    background: #FFF;
+    position: relative;
+    top: -1px;
+}
+
+#enable_audio {
+    margin-top: 12pt;
+    font-size: 22pt;
+}
