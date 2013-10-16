@@ -89,6 +89,46 @@ body {
 	color: #FFB213;
 }
 
+#loader {
+	font-family: Norwester, monospace;
+	font-size: 128pt;
+	color: #FFB213;
+	position: absolute;
+	top: 32pt;
+	left: 48pt;
+	display: none;
+
+	-moz-animation-direction: alternate;
+	-moz-animation-duration: .3s;
+	-moz-animation-iteration-count: infinite;
+	-moz-animation-name: loader-anim;
+
+	-webkit-animation-direction: alternate;
+	-webkit-animation-duration: .3s;
+	-webkit-animation-iteration-count: infinite;
+	-webkit-animation-name: loader-anim;
+}
+
+@-moz-keyframes loader-anim {
+	from {
+		opacity: 0.0;
+	}
+
+	to {
+		opacity: 1.0;
+	}
+}
+
+@-webkit-keyframes loader-anim {
+	from {
+		opacity: 0.0;
+	}
+
+	to {
+		opacity: 1.0;
+	}
+}
+
 h1 {
 	font-size: 12pt;
 	margin: 0;

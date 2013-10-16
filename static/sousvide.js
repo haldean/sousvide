@@ -2,6 +2,7 @@
 var MAX_TEMP_STORE = 60 * 60 * 3;
 var temps = new Array();
 
+var loader
 var tempElem, absErrElem, targetElem, heatingElem, plotElem, accErrElem
 var targetDisplayElem, targetChangeElem, targetInputElem
 var pInputElem, iInputElem, dInputElem
@@ -9,6 +10,8 @@ var enabledElem, maxErrElem
 var timerElem, timerAudio
 
 var enableButton, disableButton
+
+var loadUntilTrue = undefined;
 
 function primeTempCache() {
 	$.ajax({
@@ -41,6 +44,11 @@ function getApiData() {
 }
 
 function displayData(data) {
+	if (loadUntilTrue && loadUntilTrue(data)) {
+		$(loader).css('display', 'none')
+		loadUntilTrue = undefined
+	}
+
 	var temp = data.Temp,
 		target = data.Target,
 		err = temp - target;
@@ -141,18 +149,24 @@ function displayTimers(data) {
 	}
 }
 
-function attachRequest(elem, path, data) {
+function attachRequest(elem, path, blinkUntil) {
 	$(elem).click(function(e) {
-		// add spinnery thing
+		e.preventDefault();
+		loadUntilTrue = blinkUntil
+
+		loader.style.webkitAnimationName = ""
+		loader.style.mozAnimationName = ""
+		loader.style.webkitAnimationName = "loader-anim"
+		loader.style.mozAnimationName = "loader-anim"
+		$(loader).css('display', 'block')
+
 		$.ajax({
 			url: path,
-			data: data,
 			type: 'html',
 			success: function(resp) {
 				console.log("got response to " + path + ": " + resp);
 			}
 		})
-		e.preventDefault();
 	});
 	console.log("sent onclick for elem to " + path)
 }
@@ -163,9 +177,15 @@ $(document).ready(function() {
 	targetElem = document.getElementById('target')
 
 	enableButton = document.getElementById('button_enable')
-	attachRequest(enableButton, "/enable");
+	attachRequest(enableButton, "/enable", function(data) {
+		return data.Enabled
+	})
 	disableButton = document.getElementById('button_disable')
-	attachRequest(disableButton, "/disable");
+	attachRequest(disableButton, "/disable", function(data) {
+		return !data.Enabled
+	})
+
+	loader = document.getElementById('loader')
 
 	heatingElem = document.getElementById('heating')
 	plotElem = document.getElementById('plot')
