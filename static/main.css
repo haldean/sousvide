@@ -20,12 +20,43 @@ body {
 	overflow: hidden;
 }
 
+#mask {
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	z-index: 10;
+	display: none;
+	background: #000;
+}
+
+#wait {
+	position: absolute;
+	top: 30%;
+	left: 50%;
+	width: 500pt;
+	background: #FFF;
+	padding: 32pt;
+	margin-left: -282pt;
+	text-align: center;
+}
+
+#wait h2 {
+	font-family: Norwester, monospace;
+	text-transform: uppercase;
+	font-weight: normal;
+	font-size: 64pt;
+	margin: 0;
+}
+
 #floater {
 	position: fixed;
 	left: 32pt;
 	top: 32pt;
 	font-family: Norwester, monospace;
 	width: 500pt;
+	z-index: 0;
 }
 
 #display {

@@ -1,4 +1,14 @@
-var timerElem, timerAudio
+var timerElem, timerAudio, audioEnable
+
+function initTimerElems() {
+	timerElem = document.getElementById('timers')
+	timerAudio = document.getElementById('timernoise')
+	audioEnable = document.getElementById('enable_audio')
+	audioEnable.onclick = function() {
+		$(audioEnable).css('display', 'none')
+		timerAudio.play()
+	}
+}
 
 function getTimerData() {
 	$.ajax({
