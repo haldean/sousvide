@@ -8,16 +8,10 @@
          url('webfonts/norwester.svg#font') format('svg');
 }
 
-.bg-primary { background: #FE4F00; }
-.bg-secondary { background: #FFB213; }
-.fg-primary { color: #FE4F00; }
-.fg-secondary { color: #FFB213; }
-/*
-.bg-primary { background: #78F418; }
-.bg-secondary { background: #4D742E; }
-.fg-primary { color: #78F418; }
-.fg-secondary { color: #4D742E; }
-*/
+.bg-primary { background: #CCC; }
+.bg-secondary { background: #FFF; }
+.fg-primary { color: #CCC; }
+.fg-secondary { color: #000; }
 
 body {
     font-family: 'Source Sans Pro', sans-serif;
@@ -28,8 +22,8 @@ body {
 
 #floater {
 	position: fixed;
-	right: 32pt;
-	top: 0;
+	left: 32pt;
+	top: 32pt;
 	font-family: Norwester, monospace;
 	width: 500pt;
 }
@@ -81,6 +75,7 @@ body {
 	padding: 8pt 16pt;
 	text-transform: uppercase;
 	text-decoration: none;
+	color: #000;
 }
 
 #buttonbar #button_enable {
@@ -101,7 +96,7 @@ body {
 	font-size: 128pt;
 	position: absolute;
 	top: 32pt;
-	left: 48pt;
+	right: 48pt;
 	display: none;
 
 	-moz-animation-direction: alternate;
@@ -155,7 +150,7 @@ h1 a {
 }
 
 .targetline {
-	stroke: #FFB213;
+	stroke: #FFF;
 	stroke-width: 5px;
 	shape-rendering: crispEdges;
 }

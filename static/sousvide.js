@@ -64,19 +64,19 @@ function displayData(data) {
 	$(absErrElem).text((err >= 0 ? '+' : '') + err.toFixed(2));
 
 	if (data.Enabled && (lastEnabled == false || lastEnabled == undefined)) {
-		console.log("dis -> en")
-		$(enableButton).addClass('fg-secondary')
-		$(enableButton).removeClass('fg-primary')
-		$(disableButton).addClass('fg-primary')
-		$(disableButton).removeClass('fg-secondary')
-		reapplyTheme()
+		console.log("dis -> en");
+		$(enableButton).removeClass('fg-primary');
+		$(disableButton).removeClass('fg-secondary');
+		$(enableButton).addClass('fg-secondary');
+		$(disableButton).addClass('fg-primary');
+		setOrange();
 	} else if (!data.Enabled && (lastEnabled == true || lastEnabled == undefined)) {
-		console.log("en -> dis")
-		$(disableButton).addClass('fg-secondary')
-		$(disableButton).removeClass('fg-primary')
-		$(enableButton).addClass('fg-primary')
-		$(enableButton).removeClass('fg-secondary')
-		reapplyTheme()
+		console.log("en -> dis");
+		$(enableButton).removeClass('fg-secondary');
+		$(disableButton).removeClass('fg-primary');
+		$(enableButton).addClass('fg-primary');
+		$(disableButton).addClass('fg-secondary');
+		setBlue();
 	}
 	lastEnabled = data.Enabled
 
@@ -180,8 +180,6 @@ function attachRequest(elem, path, blinkUntil) {
 }
 
 $(document).ready(function() {
-	//setTheme("#FFF", "#000")
-
 	tempElem = document.getElementById('temp')
 	absErrElem = document.getElementById('abs_err')
 	targetElem = document.getElementById('target')
