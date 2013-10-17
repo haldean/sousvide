@@ -3,6 +3,7 @@
 	<head>
 		<title>sousvide</title>
         <link rel="stylesheet" media="screen and (min-device-width: 800px)" href="screen.css" />
+		<link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
         <link rel="stylesheet" href="main.css" />
 
 		<script src="jquery.min.js"></script>
@@ -11,6 +12,7 @@
 		<script src="chart.js"></script>
 		<script src="timers.js"></script>
 		<script src="temp.js"></script>
+		<script src="editor.js"></script>
 		<script src="sousvide.js"></script>
 	</head>
 	<body class="bg-primary">
@@ -30,7 +32,7 @@
 					<span id="target"></span> &deg;C
 				</div>
 				<div id="error_container">
-					<span class="fg-secondary">offset</span>
+					<span class="fg-secondary">error</span>
 					<span id="abs_err"></span> &deg;C
 				</div>
 			</div>
@@ -38,6 +40,55 @@
 				<a id="button_enable" href="#">Enabled</a>
 				<a id="button_disable" href="#">Disabled</a>
 			</div>
+		</div>
+		<div id="editor_container">
+			<div id="editor" class="bg-secondary">
+				<table>
+					<tr>
+						<td>target</td>
+						<td>
+							<form id="target_form" method="POST" action="/target">
+								<input type="text" id="target_input" name="target" class="bg-secondary">&deg;C
+								<input type="submit" style="display:none;">
+							</form>
+						</td>
+					</tr>
+				</table>
+				<form id="pid_form" method="POST" action="/pid">
+					<table>
+						<tr>
+							<td>Prop</td>
+							<td class="val">
+								<input type="text" class="bg-secondary" name="p" id="pid_p">
+							</td>
+						</tr>
+						<tr>
+							<td>Int</td>
+							<td class="val">
+								<input type="text" class="bg-secondary" name="i" id="pid_i">
+							</td>
+						</tr>
+						<tr>
+							<td>Deriv</td>
+							<td class="val">
+								<input type="text" class="bg-secondary" name="d" id="pid_d">
+								<input value="save PID" type="submit" style="display:none">
+							</td>
+						</tr>
+						<!--
+						<tr>
+							<td></td>
+							<td><input value="save PID" type="submit"></td>
+						</tr>
+						-->
+					</table>
+				</form>
+			</div>
+			<!-- this enclosing span is to get around strange behavior in Chrome
+			where the background of the <a> isn't dealt with correctly. -->
+			<span class="bg-secondary" style="float:left">
+				<a href="#" id="editor_expand" class="icon-double-angle-right fg-primary"></a>
+			</span>
 		</div>
 		<div id="loader" class="fg-secondary">&deg;</div>
 
@@ -59,20 +110,6 @@
 			<h2>status</h2>
 			<table>
 				<tr>
-					<td class="label target_label">Target temperature:</td>
-					<td class="val">
-						<span id="target_display">
-							<span id="old_target"></span> &deg;C
-						</span>
-						<span id="target_change">
-							<form method="POST" action="/target">
-								<input type="text" id="target_input" name="target">
-								<input type="submit" style="display:none;">
-							</form>
-						</span>
-					</td>
-				</tr>
-				<tr>
 					<td class="label">
 						Mean error per sample:
 						<span class="subtext">
@@ -91,7 +128,6 @@
 					<td class="val"><span id="max_err"></span> &deg;C</td>
 				</tr>
 			</table>
-			<img src="/plot" id="plot">
 		</section>
 		<section style="display:none">
 			<h2>controller</h2>
@@ -100,19 +136,19 @@
 					<tr>
 						<td>Proportional</td>
 						<td class="val">
-							<input type="text" class="pid_param" name="p" id="pid_p">
+							<input type="text" class="bg-secondary" name="p" id="pid_p">
 						</td>
 					</tr>
 					<tr>
 						<td>Integral</td>
 						<td class="val">
-							<input type="text" class="pid_param" name="i" id="pid_i">
+							<input type="text" class="bg-secondary" name="i" id="pid_i">
 						</td>
 					</tr>
 					<tr>
 						<td>Derivative</td>
 						<td class="val">
-							<input type="text" class="pid_param" name="d" id="pid_d">
+							<input type="text" class="bg-secondary" name="d" id="pid_d">
 						</td>
 					</tr>
 					<tr>

@@ -75,6 +75,9 @@ function pushTemp(temp) {
 }
 
 function setTarget(newT) {
+	if (target[0] == newT) {
+		return;
+	}
 	for (var i = 0; i < n; i++) {
 		target[i] = newT
 	}

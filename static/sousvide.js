@@ -29,7 +29,6 @@ function startMaskTimeout() {
 }
 
 function loaded(data) {
-	console.log(data);
 	if (loadUntilTrue && loadUntilTrue(data)) {
 		$(loader).css('display', 'none');
 		loadUntiltrue = undefined;
@@ -37,26 +36,81 @@ function loaded(data) {
 	hideMask();
 }
 
+function startLoader(blinkUntil) {
+	loadUntilTrue = blinkUntil;
+	loader.style.webkitAnimationName = ""
+	loader.style.mozAnimationName = ""
+	loader.style.webkitAnimationName = "loader-anim"
+	loader.style.mozAnimationName = "loader-anim"
+	$(loader).css('display', 'block')
+}
+
 function attachRequest(elem, path, blinkUntil) {
 	$(elem).click(function(e) {
 		e.preventDefault();
-		loadUntilTrue = blinkUntil
-
-		loader.style.webkitAnimationName = ""
-		loader.style.mozAnimationName = ""
-		loader.style.webkitAnimationName = "loader-anim"
-		loader.style.mozAnimationName = "loader-anim"
-		$(loader).css('display', 'block')
-
+		startLoader(blinkUntil);
 		$.ajax({
 			url: path,
-			type: 'html',
+			dataType: 'text',
+			type: 'post',
 			success: function(resp) {
 				console.log("got response to " + path + ": " + resp);
 			}
 		})
 	});
-	console.log("sent onclick for elem to " + path)
+}
+
+function findInputs(root, so_far) {
+	if (so_far == undefined) {
+		so_far = new Array();
+	}
+	var children = root.children;
+	for (var i = 0; i < children.length; i++) {
+		var child = children[i];
+		if (child.tagName == "INPUT") {
+			so_far.push(child);
+		} else if (child.children) {
+			so_far = findInputs(child, so_far);
+		}
+	}
+	return so_far;
+}
+
+function formAjax(formElem, path, blinkUntil) {
+	submit = (function(e) {
+		if (e) e.preventDefault();
+		startLoader(blinkUntil);
+		var data = {};
+		var inputs = findInputs(formElem);
+		for (var i = 0; i < inputs.length; i++) {
+			if (inputs[i].attributes.type.value == "text") {
+				data[inputs[i].attributes.name.value] = inputs[i].value;
+			}
+		}
+		$.ajax({
+			url: path,
+			data: data,
+			type: 'post',
+			dataType: 'text',
+			success: function(resp) {
+				console.log("got response to " + path + " with data " + data + ": " + resp);
+			},
+			error: function(xhr, stat, err) {
+				console.log("error " + err + " on backend: " + xhr.responseText);
+			}
+		});
+	});
+
+	$(formElem).submit(submit);
+	var inputs = findInputs(formElem);
+	for (var i = 0; i < inputs.length; i++) {
+		$(inputs[i]).keyup(function(e) {
+			if (e.keyCode == 13) {
+				submit();
+				e.currentTarget.blur();
+			}
+		});
+	}
 }
 
 $(document).ready(function() {
@@ -70,4 +124,6 @@ $(document).ready(function() {
 
 	initTimerElems();
 	getTimerData();
+
+	initEditor();
 })

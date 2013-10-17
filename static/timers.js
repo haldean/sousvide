@@ -1,3 +1,5 @@
+var ENABLE_TIMERS = false;
+
 var timerElem, timerAudio, audioEnable
 
 function initTimerElems() {
@@ -11,6 +13,8 @@ function initTimerElems() {
 }
 
 function getTimerData() {
+	if (!ENABLE_TIMERS) return;
+
 	$.ajax({
 		url: '/timers',
 		type: 'json',

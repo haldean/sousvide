@@ -1,5 +1,6 @@
+var ENABLE_TEMP = true;
+
 var tempElem, absErrElem, targetElem, heatingElem, accErrElem
-var targetDisplayElem, targetChangeElem, targetInputElem
 var enableButton, disableButton, lastEnabled = undefined
 var pInputElem, iInputElem, dInputElem
 
@@ -20,22 +21,17 @@ function initTempElems() {
 	heatingElem = document.getElementById('heating')
 	accErrElem = document.getElementById('acc_err')
 
-	targetChangeElem = document.getElementById('target_change')
-	targetDisplayElem = document.getElementById('target_display')
-	targetInputElem = document.getElementById('target_input')
-
 	pInputElem = document.getElementById('pid_p')
 	iInputElem = document.getElementById('pid_i')
 	dInputElem = document.getElementById('pid_d')
-
-	targetElem.onclick = function() {
-		$(targetDisplayElem).css('display', 'none')
-		$(targetChangeElem).css('display', 'inline')
-		targetInputElem.setAttribute('value', $(targetElem).text())
-	}
 }
 
 function primeTempCache() {
+	if (!ENABLE_TEMP) {
+		loaded(undefined);
+		return;
+	}
+
 	$.ajax({
 		url: '/json',
 		type: 'json',
@@ -70,13 +66,13 @@ function getApiData() {
 }
 
 function displayData(data) {
-	console.log("got data!");
 	loaded(data);
 
 	var temp = data.Temp,
 		target = data.Target,
 		err = temp - target;
 
+	setTarget(target);
 	if (temp != undefined) {
 		pushTemp(temp);
 	}
@@ -84,6 +80,10 @@ function displayData(data) {
 	$(tempElem).text(temp.toFixed(1));
 	$(targetElem).text(target.toFixed(2));
 	$(absErrElem).text((err >= 0 ? '+' : '') + err.toFixed(2));
+
+	if (document.activeElement != targetInputElem) {
+		targetInputElem.value = target.toFixed(2);
+	}
 
 	if (data.Enabled && (lastEnabled == false || lastEnabled == undefined)) {
 		console.log("dis -> en");
@@ -100,11 +100,15 @@ function displayData(data) {
 		$(disableButton).addClass('fg-secondary');
 		setBlue();
 	}
-	lastEnabled = data.Enabled
+	lastEnabled = data.Enabled;
 
-	$(accErrElem).text(data.AccError.toFixed(2))
+	$(accErrElem).text(data.AccError.toFixed(2));
 
-	pInputElem.setAttribute('value', data.Pid.P)
-	iInputElem.setAttribute('value', data.Pid.I)
-	dInputElem.setAttribute('value', data.Pid.D)
+	if (document.activeElement != pInputElem &&
+			document.activeElement != iInputElem &&
+			document.activeElement != dInputElem) {
+		pInputElem.setAttribute('value', data.Pid.P);
+		iInputElem.setAttribute('value', data.Pid.I);
+		dInputElem.setAttribute('value', data.Pid.D);
+	}
 }

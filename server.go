@@ -70,7 +70,7 @@ func (s *SousVide) StartServer() {
 		}
 		s.Target = Celsius(t)
 		s.checkpoint()
-		http.Redirect(resp, req, "/", http.StatusSeeOther)
+		resp.Write([]byte("success"))
 	})
 
 	http.HandleFunc("/pid", func(resp http.ResponseWriter, req *http.Request) {
@@ -94,6 +94,7 @@ func (s *SousVide) StartServer() {
 		s.Pid.D = d
 		s.checkpoint()
 		s.SavePid()
+		log.Printf("new pid parameters p=%f i=%f d=%f", p, i, d);
 		http.Redirect(resp, req, "/", http.StatusSeeOther)
 	})
 

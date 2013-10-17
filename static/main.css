@@ -13,8 +13,7 @@
 .fg-primary { color: #CCC; }
 .fg-secondary { color: #000; }
 
-body {
-    font-family: 'Source Sans Pro', sans-serif;
+body { font-family: 'Source Sans Pro', sans-serif;
     font-size: 14pt;
 	margin: 0;
 	overflow: hidden;
@@ -56,8 +55,10 @@ body {
 	top: 32pt;
 	font-family: Norwester, monospace;
 	width: 500pt;
-	z-index: 0;
+	z-index: 5;
 }
+
+/************ INFO PANEL *************/
 
 #display {
 	background: #FFF;
@@ -122,6 +123,8 @@ body {
 	background: #FFF;
 }
 
+/**************** LOADING INDICATOR ******************/
+
 #loader {
 	font-family: Norwester, monospace;
 	font-size: 128pt;
@@ -161,6 +164,8 @@ body {
 	}
 }
 
+/**************** VERSION INFO ******************/
+
 h1 {
 	font-size: 12pt;
 	margin: 0;
@@ -174,6 +179,8 @@ h1 a {
 	text-decoration: none;
 }
 
+/**************** CHARTS ******************/
+
 .line {
 	fill: none;
 	stroke: #000;
@@ -184,4 +191,61 @@ h1 a {
 	stroke: #FFF;
 	stroke-width: 5px;
 	shape-rendering: crispEdges;
+}
+
+/**************** EDITOR ******************/
+
+#editor_container {
+	position: fixed;
+	left: 532pt;
+	top: 32pt;
+	float: left;
+}
+
+#editor {
+	background: #FFF;
+	width: 300px;
+	float: left;
+	margin-left: -300px;
+	z-index: 0;
+}
+
+#editor_expand {
+	float: left;
+	height: 64pt;
+	padding: 8pt;
+	font-size: 32pt;
+}
+
+#editor_expand:hover {
+	color: #FFF ! important;
+}
+
+table {
+	margin: 8pt;
+	width: 100%;
+}
+
+td {
+	padding: 8pt;
+	font-family: Norwester, monospace;
+	text-transform: uppercase;
+}
+
+td:nth-of-type(1) {
+	width: 60pt;
+}
+
+td:nth-of-type(2) {
+	color: #000;
+}
+
+input[type=text] {
+	font-family: Norwester, monospace;
+	font-size: 16pt;
+	width: 100px;
+	margin-right: 8pt;
+	border: none;
+	border-bottom: 1px solid #000;
+	padding: 2pt;
 }
