@@ -36,11 +36,7 @@ function initEditor() {
 		editorVisible = !editorVisible;
 	});
 
-	formAjax(document.getElementById("target_form"), "/target", function(data) {
-		return !!data;
-	});
-
-	formAjax(document.getElementById("pid_form"), "/pid", function(data) {
+	formAjax(document.getElementById("param_form"), "/params", function(data) {
 		return !!data;
 	});
 }

@@ -60,7 +60,7 @@ func (s *SousVide) StartServer() {
 		resp.Write(b)
 	})
 
-	http.HandleFunc("/target", func(resp http.ResponseWriter, req *http.Request) {
+	http.HandleFunc("/params", func(resp http.ResponseWriter, req *http.Request) {
 		s.DataLock.Lock()
 		defer s.DataLock.Unlock()
 
@@ -68,15 +68,6 @@ func (s *SousVide) StartServer() {
 		if err != nil {
 			return
 		}
-		s.Target = Celsius(t)
-		s.checkpoint()
-		resp.Write([]byte("success"))
-	})
-
-	http.HandleFunc("/pid", func(resp http.ResponseWriter, req *http.Request) {
-		s.DataLock.Lock()
-		defer s.DataLock.Unlock()
-
 		p, err := floatData(resp, req, "p")
 		if err != nil {
 			return
@@ -92,10 +83,11 @@ func (s *SousVide) StartServer() {
 		s.Pid.P = p
 		s.Pid.I = i
 		s.Pid.D = d
+		s.Target = Celsius(t)
 		s.checkpoint()
 		s.SavePid()
 		log.Printf("new pid parameters p=%f i=%f d=%f", p, i, d);
-		http.Redirect(resp, req, "/", http.StatusSeeOther)
+		resp.Write([]byte("success"));
 	})
 
 	http.HandleFunc("/enable", func(w http.ResponseWriter, r *http.Request) {

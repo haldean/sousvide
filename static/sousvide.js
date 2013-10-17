@@ -77,7 +77,7 @@ function findInputs(root, so_far) {
 }
 
 function formAjax(formElem, path, blinkUntil) {
-	submit = (function(e) {
+	var submit = (function(e) {
 		if (e) e.preventDefault();
 		startLoader(blinkUntil);
 		var data = {};

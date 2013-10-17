@@ -44,18 +44,22 @@
 		<div id="editor_container">
 			<div id="editor" class="bg-secondary">
 				<table>
-					<tr>
-						<td>target</td>
-						<td>
-							<form id="target_form" method="POST" action="/target">
-								<input type="text" id="target_input" name="target" class="bg-secondary">&deg;C
-								<input type="submit" style="display:none;">
-							</form>
-						</td>
-					</tr>
 				</table>
-				<form id="pid_form" method="POST" action="/pid">
+				<form id="param_form" method="POST" action="/params">
 					<table>
+						<tr>
+							<td>target</td>
+							<td>
+								<form id="target_form" method="POST" action="/target">
+									<input type="text"
+										id="target_input"
+										name="target"
+										class="bg-secondary">&deg;C
+									<input type="submit" style="display:none;">
+								</form>
+							</td>
+						</tr>
+						<tr><td></td></tr>
 						<tr>
 							<td>Prop</td>
 							<td class="val">
@@ -128,37 +132,6 @@
 					<td class="val"><span id="max_err"></span> &deg;C</td>
 				</tr>
 			</table>
-		</section>
-		<section style="display:none">
-			<h2>controller</h2>
-			<form method="POST" action="/pid">
-				<table>
-					<tr>
-						<td>Proportional</td>
-						<td class="val">
-							<input type="text" class="bg-secondary" name="p" id="pid_p">
-						</td>
-					</tr>
-					<tr>
-						<td>Integral</td>
-						<td class="val">
-							<input type="text" class="bg-secondary" name="i" id="pid_i">
-						</td>
-					</tr>
-					<tr>
-						<td>Derivative</td>
-						<td class="val">
-							<input type="text" class="bg-secondary" name="d" id="pid_d">
-						</td>
-					</tr>
-					<tr>
-						<td></td>
-						<td class="val">
-							<input value="update" type="submit">
-						</td>
-					</tr>
-				</table>
-			</form>
 		</section>
 	</body>
 </html>

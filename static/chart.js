@@ -79,7 +79,7 @@ function setTarget(newT) {
 		return;
 	}
 	for (var i = 0; i < n; i++) {
-		target[i] = newT
+		target[i] = newT;
 	}
-	targetpath.attr("d", line)
+	targetpath.transition().duration(1000).attr("d", line);
 }
