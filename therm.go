@@ -64,11 +64,9 @@ func (s *SousVide) InitTherm() error {
 func (s *SousVide) MeasureTemp() error {
 	if *FakeTemp {
 		if s.Heating {
-			s.Temp += Celsius(10 * rand.Float64())
+			s.Temp += Celsius(rand.Float64())
 		} else {
-			if rand.Int() % 3 == 0 {
-				s.Temp -= Celsius(rand.Float64())
-			}
+			s.Temp -= Celsius(rand.Float64())
 		}
 		if s.Temp < 0 {
 			s.Temp = 0

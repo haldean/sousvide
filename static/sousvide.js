@@ -1,7 +1,3 @@
-// store 3 hours of data for graphing
-var MAX_TEMP_STORE = 60 * 60 * 3;
-var temps = new Array();
-
 var loader
 var tempElem, absErrElem, targetElem, heatingElem, plotElem, accErrElem
 var targetDisplayElem, targetChangeElem, targetInputElem
@@ -9,7 +5,7 @@ var pInputElem, iInputElem, dInputElem
 var enabledElem, maxErrElem
 var timerElem, timerAudio
 
-var enableButton, disableButton
+var enableButton, disableButton, lastEnabled = undefined
 
 var loadUntilTrue = undefined;
 
@@ -18,15 +14,21 @@ function primeTempCache() {
 		url: '/json',
 		type: 'json',
 		success: function(resp) {
+			var temps = Array();
 			for (var i = 0; i < resp.length; i++) {
-				temps.push(resp[i].Temp);
-				if (temps.length > MAX_TEMP_STORE) {
-					temps.shift();
-				}
+				temps.push(resp[i].Temp)
 			}
-			console.log("initialized temps to:");
-			console.log(temps);
-			getApiData();
+			console.log("initialized temps to:")
+			console.log(temps)
+			addTemps(temps)
+
+			initChart()
+			window.onresize = function() {
+				console.log("window onresize");
+				document.getElementsByTagName("svg")[0].remove();
+				initChart();
+			};
+			getApiData()
 		}
 	})
 }
@@ -54,23 +56,29 @@ function displayData(data) {
 		err = temp - target;
 
 	if (temp != undefined) {
-		temps.push(temp);
-		while (temps.length > MAX_TEMP_STORE) {
-			temps.shift();
-		}
+		pushTemp(temp);
 	}
 
 	$(tempElem).text(temp.toFixed(1));
 	$(targetElem).text(target.toFixed(2));
 	$(absErrElem).text((err >= 0 ? '+' : '') + err.toFixed(2));
 
-	if (data.Enabled) {
-		$(enableButton).addClass('selected')
-		$(disableButton).removeClass('selected')
-	} else {
-		$(enableButton).removeClass('selected')
-		$(disableButton).addClass('selected')
+	if (data.Enabled && (lastEnabled == false || lastEnabled == undefined)) {
+		console.log("dis -> en")
+		$(enableButton).addClass('fg-secondary')
+		$(enableButton).removeClass('fg-primary')
+		$(disableButton).addClass('fg-primary')
+		$(disableButton).removeClass('fg-secondary')
+		reapplyTheme()
+	} else if (!data.Enabled && (lastEnabled == true || lastEnabled == undefined)) {
+		console.log("en -> dis")
+		$(disableButton).addClass('fg-secondary')
+		$(disableButton).removeClass('fg-primary')
+		$(enableButton).addClass('fg-primary')
+		$(enableButton).removeClass('fg-secondary')
+		reapplyTheme()
 	}
+	lastEnabled = data.Enabled
 
 	$(accErrElem).text(data.AccError.toFixed(2))
 	$(maxErrElem).text(data.MaxError.toFixed(2))
@@ -172,6 +180,8 @@ function attachRequest(elem, path, blinkUntil) {
 }
 
 $(document).ready(function() {
+	//setTheme("#FFF", "#000")
+
 	tempElem = document.getElementById('temp')
 	absErrElem = document.getElementById('abs_err')
 	targetElem = document.getElementById('target')
