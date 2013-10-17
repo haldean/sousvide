@@ -114,9 +114,6 @@ func (s *SousVide) StartServer() {
 	http.HandleFunc("/json", func(w http.ResponseWriter, r *http.Request) {
 		s.DumpJson(w, r)
 	})
-	http.HandleFunc("/plot", func(w http.ResponseWriter, r *http.Request) {
-		s.GenerateChart2(w, r)
-	})
 	http.HandleFunc("/timer", AddTimerHandler)
 	http.HandleFunc("/timers", GetTimersHandler)
 	http.HandleFunc("/delete_timer", DeleteTimerHandler)
