@@ -17,5 +17,6 @@ function reapplyTheme() {
 	d3.selectAll('.fg-secondary').transition().style('color', secondary)
 	d3.selectAll('.targetline').transition().style('stroke', secondary)
 	d3.selectAll('.line').transition().style('stroke', highlight)
+	d3.selectAll('.heatingline').transition().style('fill', secondary)
 }
 

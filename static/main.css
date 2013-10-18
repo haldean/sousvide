@@ -188,9 +188,14 @@ h1 a {
 }
 
 .targetline {
+	fill: none;
 	stroke: #FFF;
 	stroke-width: 5px;
 	shape-rendering: crispEdges;
+}
+
+.heatingline {
+	fill: #CCC;
 }
 
 /**************** EDITOR ******************/

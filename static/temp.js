@@ -37,19 +37,21 @@ function primeTempCache() {
 		type: 'json',
 		success: function(resp) {
 			var temps = Array();
+			var heating = Array();
 			for (var i = 0; i < resp.length; i++) {
-				temps.push(resp[i].Temp)
+				temps.push(resp[i].Temp);
+				heating.push(resp[i].Heating);
 			}
-			addTemps(temps)
+			addTemps(temps, heating);
 
-			initChart()
+			initChart();
 			window.onresize = function() {
 				console.log("window onresize");
 				document.getElementsByTagName("svg")[0].remove();
 				initChart();
 				reapplyTheme();
 			};
-			getApiData()
+			getApiData();
 		}
 	})
 }
@@ -74,7 +76,7 @@ function displayData(data) {
 
 	setTarget(target);
 	if (temp != undefined) {
-		pushTemp(temp);
+		pushTemp(temp, data.Heating);
 	}
 
 	$(tempElem).text(temp.toFixed(1));
@@ -86,14 +88,12 @@ function displayData(data) {
 	}
 
 	if (data.Enabled && (lastEnabled == false || lastEnabled == undefined)) {
-		console.log("dis -> en");
 		$(enableButton).removeClass('fg-primary');
 		$(disableButton).removeClass('fg-secondary');
 		$(enableButton).addClass('fg-secondary');
 		$(disableButton).addClass('fg-primary');
 		setOrange();
 	} else if (!data.Enabled && (lastEnabled == true || lastEnabled == undefined)) {
-		console.log("en -> dis");
 		$(enableButton).removeClass('fg-secondary');
 		$(disableButton).removeClass('fg-primary');
 		$(enableButton).addClass('fg-primary');
