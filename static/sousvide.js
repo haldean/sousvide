@@ -6,6 +6,15 @@ var loadUntilTrue = undefined;
 var mask;
 var maskHidden = true;
 
+var animEnabled = true;
+
+function disableAnim(){
+  animEnabled = false;
+  d3.selection.prototype.duration = function(){ return this; }
+  d3.selection.prototype.transition = function(){ return this; }
+  d3.selection.prototype.ease = function() { return this; }
+}
+
 function hideMask() {
 	if (maskHidden) return;
 	maskHidden = true;
