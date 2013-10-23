@@ -1,10 +1,11 @@
 xdim = 30;
-ydim = 40;
-zdim = 25;
+ydim = 50;
+zdim = 20;
 wing = 20;
-slot = 10;
+slot = 8;
 wall = 3;
 screw = 4;
+$fn = 6;
 
 module wing() {
 	difference() {
