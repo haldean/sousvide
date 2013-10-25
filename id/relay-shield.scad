@@ -3,8 +3,8 @@ ydim = 50;
 zdim = 20;
 wing = 20;
 slot = 8;
-wall = 3;
-screw = 4;
+wall = 2;
+screw = 2.5;
 $fn = 6;
 
 module wing() {
@@ -16,26 +16,34 @@ module wing() {
 	}
 }
 
-union() {
-	cube([wall, ydim, zdim]);
-	difference() {
-		union() {
-			cube([xdim, wall, zdim]);
-			translate([0, ydim - wall, 0]) {
+module shield() {
+	union() {
+		cube([wall, ydim, zdim]);
+		difference() {
+			union() {
 				cube([xdim, wall, zdim]);
+				translate([0, ydim - wall, 0]) {
+					cube([xdim, wall, zdim]);
+				}
+			}
+			translate([2*wall, 0, 2*wall]) {
+				cube([xdim, ydim + 2*wall, slot]);
 			}
 		}
-		translate([2*wall, 0, 2*wall]) {
-			cube([xdim, ydim + 2*wall, slot]);
+		translate([0, 0, zdim - wall]) {
+			cube([xdim, ydim, wall]);
+		}
+		translate([0, -wing, 0]) {
+			wing();
+		}
+		translate([0, ydim, 0]) {
+			wing();
 		}
 	}
-	translate([0, 0, zdim - wall]) {
-		cube([xdim, ydim, wall]);
-	}
-	translate([0, -wing, 0]) {
-		wing();
-	}
-	translate([0, ydim, 0]) {
-		wing();
-	}
+}
+
+translate([zdim / 2, -wall - ydim / 2, 0]) {
+  rotate(270, [0, 1, 0]) {
+    shield();
+  }
 }
