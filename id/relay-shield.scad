@@ -1,9 +1,9 @@
+wall = 2;
 xdim = 30;
-ydim = 50;
-zdim = 20;
+ydim = 50 + 2*wall;
+zdim = 28;
 wing = 20;
 slot = 8;
-wall = 2;
 screw = 2.5;
 $fn = 6;
 
@@ -26,7 +26,7 @@ module shield() {
 					cube([xdim, wall, zdim]);
 				}
 			}
-			translate([2*wall, 0, 2*wall]) {
+			translate([2*wall, 0, zdim - 3*wall - slot]) {
 				cube([xdim, ydim + 2*wall, slot]);
 			}
 		}
@@ -42,8 +42,5 @@ module shield() {
 	}
 }
 
-translate([zdim / 2, -wall - ydim / 2, 0]) {
-  rotate(270, [0, 1, 0]) {
-    shield();
-  }
-}
+translate([zdim / 2, -wall - ydim / 2, 0]) rotate(270, [0, 1, 0])
+  shield();
