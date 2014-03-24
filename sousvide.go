@@ -26,6 +26,8 @@ var PidFile = flag.String("pid_file", "pid.json", "file to save PID values in")
 var StartEnabled = flag.Bool("enabled", false, "start with heater enabled")
 var StartTarget = flag.Float64("target", 0, "initial target temperature, in C")
 
+var Stream chan HistorySample
+
 type SousVide struct {
 	Heating     bool
 	Enabled     bool
@@ -99,14 +101,16 @@ func (s *SousVide) Snapshot() HistorySample {
 }
 
 func (s *SousVide) checkpoint() {
+	snapshot := s.Snapshot()
 	if len(s.History) == HistoryLength {
 		for i := 0; i < HistoryLength-1; i++ {
 			s.History[i] = s.History[i+1]
 		}
-		s.History[len(s.History)-1] = s.Snapshot()
+		s.History[len(s.History)-1] = snapshot
 	} else {
-		s.History = append(s.History, s.Snapshot())
+		s.History = append(s.History, snapshot)
 	}
+	Stream <- snapshot
 
 	s.AccError = 0
 	s.MaxError = 0
@@ -193,7 +197,9 @@ func main() {
 		return
 	}
 
+	Stream = StartSockServer()
 	go StartTimerUpdateLoop()
 	go s.StartControlLoop()
+	go StartBroadcast()
 	s.StartServer()
 }

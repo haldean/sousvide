@@ -66,19 +66,19 @@ func (s *SousVide) StartServer() {
 
 		t, err := floatData(resp, req, "target")
 		if err != nil {
-			return
+			t = float64(s.Target)
 		}
 		p, err := floatData(resp, req, "p")
 		if err != nil {
-			return
+			p = s.Pid.P
 		}
 		i, err := floatData(resp, req, "i")
 		if err != nil {
-			return
+			i = s.Pid.I
 		}
 		d, err := floatData(resp, req, "d")
 		if err != nil {
-			return
+			d = s.Pid.D
 		}
 		s.Pid.P = p
 		s.Pid.I = i
