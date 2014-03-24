@@ -122,10 +122,10 @@ The total BoM cost for the electronics and hardware came out to $128.
 ### User Interface
 
 The UI of this sous vide cooker is all provided through a web interface that is
-simple, easy-to-use and mobile-friendly.
+simple, easy-to-use and mobile-friendly. I'm putting the finishing touches
+on an Android app that can be used to control it as well.
 
-![The SV1 UI. SV2 adds kitchen timers, more statistics and improved graphing not
-shown in this screenshot.](webui.png)
+![The SV2 UI.](webui.png)
 
 The UI is provided by a Go backend that runs directly on the Raspberry Pi. The
 backend provides both the control loop and the UI; this has the advantage that
@@ -134,7 +134,7 @@ if needed.
 
 The web UI allows you to view a graph of the actual and target temperatures,
 with an overlay that shows at what times the heater was on. The graphs are
-generated SVG and are refreshed through Javascript once a second. The UI also
+generated generated in Javascript using d3, and are live-updating. The UI also
 shows the current and target temperatures in numeric form, the current error,
 the average error over the last 90 seconds, the most the temperature has
 overshot in the last 90 seconds, and whather the heaters are on or off. All data
